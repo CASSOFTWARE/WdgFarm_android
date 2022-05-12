@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Users/Administrator/AndroidStudioProjects/WdgFarm_Android/app/src/main/res/drawable-v24/custom_radio_button.xml" value="0.3225" />
+        <entry key="..\:/Users/Administrator/AndroidStudioProjects/WdgFarm_Android/app/src/main/res/drawable-v24/ic_settings_24dp.xml" value="0.2945" />
+        <entry key="..\:/Users/Administrator/AndroidStudioProjects/WdgFarm_Android/app/src/main/res/drawable-v24/radio_text_selected.xml" value="0.3055" />
+        <entry key="..\:/Users/Administrator/AndroidStudioProjects/WdgFarm_Android/app/src/main/res/drawable-v24/state_normal_radio_button.xml" value="0.3225" />
+        <entry key="..\:/Users/Administrator/AndroidStudioProjects/WdgFarm_Android/app/src/main/res/drawable-v24/state_selected_radio_button.xml" value="0.3225" />
+        <entry key="..\:/Users/Administrator/AndroidStudioProjects/WdgFarm_Android/app/src/main/res/drawable/selector_scale.xml" value="0.2945" />
+        <entry key="..\:/Users/Administrator/AndroidStudioProjects/WdgFarm_Android/app/src/main/res/drawable/selector_scale_text.xml" value="0.2945" />
+        <entry key="..\:/Users/Administrator/AndroidStudioProjects/WdgFarm_Android/app/src/main/res/drawable/work_info_button.xml" value="0.2945" />
+        <entry key="..\:/Users/Administrator/AndroidStudioProjects/WdgFarm_Android/app/src/main/res/drawable/work_weight_text.xml" value="0.2375" />
+        <entry key="..\:/Users/Administrator/AndroidStudioProjects/WdgFarm_Android/app/src/main/res/layout/activity_info.xml" value="0.23125" />
+        <entry key="..\:/Users/Administrator/AndroidStudioProjects/WdgFarm_Android/app/src/main/res/layout/activity_info_add.xml" value="0.3020833333333333" />
+        <entry key="..\:/Users/Administrator/AndroidStudioProjects/WdgFarm_Android/app/src/main/res/layout/activity_main.xml" value="0.3515625" />
+        <entry key="..\:/Users/Administrator/AndroidStudioProjects/WdgFarm_Android/app/src/main/res/layout/activity_splash.xml" value="0.3020833333333333" />
+        <entry key="..\:/Users/Administrator/AndroidStudioProjects/WdgFarm_Android/app/src/main/res/layout/fragment_data.xml" value="0.28854166666666664" />
+        <entry key="..\:/Users/Administrator/AndroidStudioProjects/WdgFarm_Android/app/src/main/res/layout/fragment_history.xml" value="0.2" />
+        <entry key="..\:/Users/Administrator/AndroidStudioProjects/WdgFarm_Android/app/src/main/res/layout/fragment_info.xml" value="0.28854166666666664" />
+        <entry key="..\:/Users/Administrator/AndroidStudioProjects/WdgFarm_Android/app/src/main/res/layout/fragment_list.xml" value="0.3020833333333333" />
+        <entry key="..\:/Users/Administrator/AndroidStudioProjects/WdgFarm_Android/app/src/main/res/layout/fragment_setting.xml" value="0.28854166666666664" />
+        <entry key="..\:/Users/Administrator/AndroidStudioProjects/WdgFarm_Android/app/src/main/res/layout/fragment_work.xml" value="0.264" />
+        <entry key="..\:/Users/Administrator/AndroidStudioProjects/WdgFarm_Android/app/src/main/res/menu/bottom_nav_menu.xml" value="0.36614583333333334" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>

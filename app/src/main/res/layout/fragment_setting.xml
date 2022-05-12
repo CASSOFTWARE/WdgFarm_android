@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        
+        
+        <TextView
+            android:id="@+id/setting_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:text="@string/setting"
+            android:textColor="@color/colorBlack"
+            android:textFontWeight="700"
+            android:textSize="40dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/a_scale_ip_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/scale_a_ip"
+            style="@style/Work_FontTheme1"
+            android:layout_marginTop="50dp"
+            app:layout_constraintLeft_toLeftOf="@+id/setting_title"
+            app:layout_constraintTop_toBottomOf="@+id/setting_title"/>
+
+        <EditText
+            android:id="@+id/a_scale_ip_value"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/selector_scale_button"
+            android:inputType="number"
+            android:digits="1234567890."
+            style="@style/Work_FontTheme2"
+            app:layout_constraintTop_toTopOf="@+id/a_scale_ip_text"
+            app:layout_constraintBottom_toBottomOf="@+id/a_scale_ip_text"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintWidth_percent="0.6"/>
+
+        <TextView
+            android:id="@+id/a_scale_port_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/scale_a_port"
+            style="@style/Work_FontTheme1"
+            android:layout_marginTop="40dp"
+            app:layout_constraintLeft_toLeftOf="@+id/setting_title"
+            app:layout_constraintTop_toBottomOf="@+id/a_scale_ip_text"/>
+
+        <EditText
+            android:id="@+id/a_scale_port_value"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/selector_scale_button"
+            android:inputType="number"
+            style="@style/Work_FontTheme2"
+            app:layout_constraintTop_toTopOf="@+id/a_scale_port_text"
+            app:layout_constraintBottom_toBottomOf="@+id/a_scale_port_text"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintWidth_percent="0.6"/>
+
+        <TextView
+            android:id="@+id/b_scale_ip_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/scale_b_ip"
+            style="@style/Work_FontTheme1"
+            android:layout_marginTop="70dp"
+            app:layout_constraintLeft_toLeftOf="@+id/setting_title"
+            app:layout_constraintTop_toBottomOf="@+id/a_scale_port_text"/>
+
+        <EditText
+            android:id="@+id/b_scale_ip_value"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/selector_scale_button"
+            android:inputType="number"
+            android:digits="1234567890."
+            style="@style/Work_FontTheme2"
+            app:layout_constraintTop_toTopOf="@+id/b_scale_ip_text"
+            app:layout_constraintBottom_toBottomOf="@+id/b_scale_ip_text"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintWidth_percent="0.6"/>
+
+        <TextView
+            android:id="@+id/b_scale_port_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/scale_b_port"
+            style="@style/Work_FontTheme1"
+            android:layout_marginTop="40dp"
+            app:layout_constraintLeft_toLeftOf="@+id/setting_title"
+            app:layout_constraintTop_toBottomOf="@+id/b_scale_ip_text"/>
+
+        <EditText
+            android:id="@+id/b_scale_port_value"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/selector_scale_button"
+            android:inputType="number"
+            style="@style/Work_FontTheme2"
+            app:layout_constraintTop_toTopOf="@+id/b_scale_port_text"
+            app:layout_constraintBottom_toBottomOf="@+id/b_scale_port_text"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintWidth_percent="0.6"/>
+
+        <Button
+            android:id="@+id/setting_save_btn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/save"
+            android:textSize="35dp"
+            android:layout_marginBottom="20dp"
+            app:layout_constraintLeft_toLeftOf="@+id/setting_title"
+            app:layout_constraintRight_toRightOf="@+id/a_scale_ip_value"
+            app:layout_constraintBottom_toBottomOf="parent"
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
