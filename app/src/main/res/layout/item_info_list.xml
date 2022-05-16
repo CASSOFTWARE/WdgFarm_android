@@ -4,19 +4,18 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/cl_product_item_layout"
+        android:id="@+id/cl_info_item_layout"
         android:layout_width="match_parent"
         android:layout_height="100dp"
         android:layout_margin="10dp"
         android:padding="10dp">
 
         <TextView
-            android:id="@+id/tv_code"
+            android:id="@+id/tv_code_box"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="0001"
             android:singleLine="true"
-            tools:text="0001"
             style="@style/Work_FontTheme1"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -28,42 +27,19 @@
             android:layout_height="match_parent"
             android:background="@color/colorGrey"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toEndOf="@id/tv_code"/>
+            app:layout_constraintStart_toEndOf="@id/tv_code_box"/>
 
         <TextView
-            android:id="@+id/tv_name"
+            android:id="@+id/tv_name_weight"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="방울토마토"
+            android:text="(주)카스"
             android:singleLine="true"
-            tools:text="방울토마토"
             style="@style/Work_FontTheme1"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@id/tv_code"
+            app:layout_constraintStart_toEndOf="@id/tv_code_box"
             app:layout_constraintWidth_percent="0.5"/>
-
-        <View
-            android:layout_width="1dp"
-            android:layout_height="match_parent"
-            android:background="@color/colorGrey"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toEndOf="@id/tv_name"/>
-
-        <TextView
-            android:id="@+id/tv_price"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="3500"
-            android:singleLine="true"
-            tools:text="3500"
-            style="@style/Work_FontTheme1"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@id/tv_name"
-            app:layout_constraintWidth_percent="0.2"/>
-
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

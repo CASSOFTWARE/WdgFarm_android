@@ -9,10 +9,8 @@ import androidx.databinding.DataBindingUtil;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.util.Log;
+
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -20,36 +18,27 @@ import android.widget.Toast;
 
 import com.example.wdgfarm_android.R;
 import com.example.wdgfarm_android.databinding.ActivityInfoAddBinding;
-import com.example.wdgfarm_android.model.Box;
-import com.example.wdgfarm_android.model.Company;
-import com.example.wdgfarm_android.model.Product;
-import com.example.wdgfarm_android.utils.SqliteUtil;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.util.List;
 
 public class InfoAddActivity extends AppCompatActivity {
+    public static final String EXTRA_ID = "com.example.wdgfarm_android.EXTRA_ID";
+    public static final String EXTRA_CODE = "com.example.wdgfarm_android.EXTRA_CODE";
+    public static final String EXTRA_NAME = "com.example.wdgfarm_android.EXTRA_NAME";
+    public static final String EXTRA_VALUE = "com.example.wdgfarm_android.EXTRA_VALUE";
 
-    SqliteUtil dbUtil;
+    public static final int DELETE_REQUEST = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_info_add);
 
-        dbUtil = new SqliteUtil(this);
 
         Intent intent = getIntent();
         ActivityInfoAddBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_info_add);
 
         String info = intent.getExtras().getString("info");
-        int type = intent.getExtras().getInt("type");
+
         binding.infoBackBtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
@@ -85,7 +74,12 @@ public class InfoAddActivity extends AppCompatActivity {
                 break;
         }
 
-        if(type == 0){
+        if(intent.hasExtra(EXTRA_ID)){
+            binding.infoAddCodeValue.setText(String.valueOf(intent.getIntExtra(EXTRA_CODE, 0)));
+            binding.infoAddNameValue.setText(intent.getStringExtra(EXTRA_NAME));
+            binding.infoAddValue.setText(String.valueOf(intent.getIntExtra(EXTRA_VALUE, 1000)));
+        }
+        else{
             binding.infoDeleteBtn.setVisibility(View.GONE);
         }
 
@@ -96,41 +90,63 @@ public class InfoAddActivity extends AppCompatActivity {
                 switch (info){
                     case "상품 정보":
                         if(_checkBlank(binding, info)){
-                            Product product = new Product();
-                            product.setCode(parseInt(binding.infoAddCodeValue.getText().toString()));
-                            product.setName(binding.infoAddNameValue.getText().toString());
-                            product.setPrice(parseInt(binding.infoAddValue.getText().toString()));
+                            Intent data = new Intent();
+                            data.putExtra("info", info);
+                            data.putExtra(EXTRA_CODE, parseInt(binding.infoAddCodeValue.getText().toString()));
+                            data.putExtra(EXTRA_NAME, binding.infoAddNameValue.getText().toString());
+                            data.putExtra(EXTRA_VALUE, parseInt(binding.infoAddValue.getText().toString()));
 
-                            dbUtil.insertProduct(product);
-                            Toast.makeText(getApplicationContext(), R.string.toast_save, Toast.LENGTH_SHORT).show();
-                            onBackPressed();
+                            int id = getIntent().getIntExtra(EXTRA_ID, -1);
+                            if(id != -1){
+                                data.putExtra(EXTRA_ID, id);
+                            }
+                            setResult(RESULT_OK, data);
+                            finish();
                         }
                         break;
 
                     case "업체 정보":
                         if(_checkBlank(binding, info)){
-                            Company company = new Company();
-                            company.setCode(parseInt(binding.infoAddCodeValue.getText().toString()));
-                            company.setName(binding.infoAddNameValue.getText().toString());
+                            Intent data = new Intent();
+                            data.putExtra("info", info);
+                            data.putExtra(EXTRA_CODE, parseInt(binding.infoAddCodeValue.getText().toString()));
+                            data.putExtra(EXTRA_NAME, binding.infoAddNameValue.getText().toString());
 
-                            dbUtil.insertCompany(company);
-                            Toast.makeText(getApplicationContext(), R.string.toast_save, Toast.LENGTH_SHORT).show();
-                            onBackPressed();
+                            int id = getIntent().getIntExtra(EXTRA_ID, -1);
+                            if(id != -1){
+                                data.putExtra(EXTRA_ID, id);
+                            }
+                            setResult(RESULT_OK, data);
+                            finish();
                         }
                         break;
 
                     case "박스 정보":
                         if(_checkBlank(binding, info)){
-                            Box box = new Box();
-                            box.setName(binding.infoAddNameValue.getText().toString());
-                            box.setWeight(parseFloat(binding.infoAddValue.getText().toString()));
+                            Intent data = new Intent();
+                            data.putExtra("info", info);
+                            data.putExtra(EXTRA_NAME, binding.infoAddNameValue.getText().toString());
+                            data.putExtra(EXTRA_VALUE, parseFloat(binding.infoAddValue.getText().toString()));
 
-                            dbUtil.insertBox(box);
-                            Toast.makeText(getApplicationContext(), R.string.toast_save, Toast.LENGTH_SHORT).show();
-                            onBackPressed();
+                            int id = getIntent().getIntExtra(EXTRA_ID, -1);
+                            if(id != -1){
+                                data.putExtra(EXTRA_ID, id);
+                            }
+                            setResult(RESULT_OK, data);
+                            finish();
                         }
                         break;
                 }
+            }
+        });
+
+        binding.infoDeleteBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent data = new Intent();
+                data.putExtra("info", info);
+                data.putExtra(EXTRA_ID, intent.getIntExtra(EXTRA_ID, 1));
+                setResult(DELETE_REQUEST, data);
             }
         });
     }
@@ -139,19 +155,19 @@ public class InfoAddActivity extends AppCompatActivity {
     private boolean _checkBlank(ActivityInfoAddBinding binding, String info){
         switch (info){
             case "상품 정보":
-                if(binding.infoAddCodeValue.getText().toString().isEmpty() || binding.infoAddNameValue.getText().toString().isEmpty() || binding.infoAddValue.getText().toString().isEmpty()){
+                if(binding.infoAddCodeValue.getText().toString().trim().isEmpty() || binding.infoAddNameValue.getText().toString().trim().isEmpty() || binding.infoAddValue.getText().toString().trim().isEmpty()){
                     Toast.makeText(this, R.string.toast_check_blank, Toast.LENGTH_SHORT).show();
                     return false;
                 }
                 break;
             case "업체 정보":
-                if(binding.infoAddCodeValue.getText().toString().isEmpty() || binding.infoAddNameValue.getText().toString().isEmpty()){
+                if(binding.infoAddCodeValue.getText().toString().trim().isEmpty() || binding.infoAddNameValue.getText().toString().trim().isEmpty()){
                     Toast.makeText(this, R.string.toast_check_blank, Toast.LENGTH_SHORT).show();
                     return false;
                 }
                 break;
             case "박스 정보":
-                if(binding.infoAddNameValue.getText().toString().isEmpty() || binding.infoAddValue.getText().toString().isEmpty()){
+                if(binding.infoAddNameValue.getText().toString().trim().isEmpty() || binding.infoAddValue.getText().toString().trim().isEmpty()){
                     Toast.makeText(this, R.string.toast_check_blank, Toast.LENGTH_SHORT).show();
                     return false;
                 }
