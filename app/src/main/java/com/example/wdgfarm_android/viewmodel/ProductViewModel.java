@@ -23,7 +23,6 @@ public class ProductViewModel extends AndroidViewModel {
         allProducts = repository.getAllProducts();
     }
 
-
     public void insert(Product product){
         repository.insert(product);
     }
@@ -35,6 +34,8 @@ public class ProductViewModel extends AndroidViewModel {
     public void delete(Product product){
         repository.delete(product);
     }
+
+//    public Product selectWhere(int id){ return repository.selectWhere(id);}
 
     public void deleteAllProducts(){
         repository.deleteAllProducts();

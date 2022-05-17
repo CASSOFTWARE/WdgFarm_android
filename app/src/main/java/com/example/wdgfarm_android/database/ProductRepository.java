@@ -31,6 +31,10 @@ public class ProductRepository {
         new DeleteProductAsyncTask(productDao).execute(product);
     }
 
+//    public Product selectWhere(int id){
+//        return productDao.selectWhere(id);
+//    }
+
     public void deleteAllProducts(){
         new DeleteAllProductsAsyncTask(productDao).execute();
     }

@@ -140,13 +140,36 @@ public class InfoAddActivity extends AppCompatActivity {
             }
         });
 
+
+
         binding.infoDeleteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent data = new Intent();
                 data.putExtra("info", info);
-                data.putExtra(EXTRA_ID, intent.getIntExtra(EXTRA_ID, 1));
+                data.putExtra(EXTRA_ID, intent.getIntExtra(EXTRA_ID, 0));
+                switch (info){
+                    case "상품 정보":
+                        data.putExtra(EXTRA_CODE, intent.getIntExtra(EXTRA_CODE, 0));
+                        data.putExtra(EXTRA_NAME, intent.getStringExtra(EXTRA_NAME));
+                        data.putExtra(EXTRA_VALUE, intent.getIntExtra(EXTRA_VALUE, 1000));
+                        break;
+
+                    case "업체 정보":
+                        data.putExtra(EXTRA_CODE, intent.getIntExtra(EXTRA_CODE, 0));
+                        data.putExtra(EXTRA_NAME, intent.getStringExtra(EXTRA_NAME));
+                        break;
+
+                    case "박스 정보":
+                        data.putExtra(EXTRA_NAME, intent.getStringExtra(EXTRA_NAME));
+                        data.putExtra(EXTRA_VALUE, intent.getFloatExtra(EXTRA_VALUE, 0));
+                        break;
+
+                    default:
+                        break;
+                }
                 setResult(DELETE_REQUEST, data);
+                finish();
             }
         });
     }

@@ -95,7 +95,7 @@ public class InfoActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (checkPermission()) {
-                    sendMail(info);
+                    exportData(info);
                 }
             }
         });
@@ -279,20 +279,28 @@ public class InfoActivity extends AppCompatActivity {
         } else if (requestCode == EDIT_REQUEST && resultCode == InfoAddActivity.DELETE_REQUEST) {
             switch (data.getStringExtra("info")) {
                 case "상품 정보":
-
+                    Product product = new Product(data.getIntExtra(InfoAddActivity.EXTRA_CODE, 0), data.getStringExtra(InfoAddActivity.EXTRA_NAME), data.getIntExtra(InfoAddActivity.EXTRA_VALUE, 1000));
+                    product.setId(data.getIntExtra(InfoAddActivity.EXTRA_ID, 0));
+                    productViewModel.delete(product);
                     break;
 
                 case "업체 정보":
-
+                    Company company = new Company(data.getIntExtra(InfoAddActivity.EXTRA_CODE, 0), data.getStringExtra(InfoAddActivity.EXTRA_NAME));
+                    company.setId(data.getIntExtra(InfoAddActivity.EXTRA_ID, 0));
+                    companyViewModel.delete(company);
                     break;
 
                 case "박스 정보":
-
+                    Box box = new Box(data.getStringExtra(InfoAddActivity.EXTRA_NAME), data.getFloatExtra(InfoAddActivity.EXTRA_VALUE, 0));
+                    box.setId(data.getIntExtra(InfoAddActivity.EXTRA_ID, 0));
+                    boxViewModel.delete(box);
                     break;
 
                 default:
                     break;
             }
+            Toast.makeText(this, "Delete complete", Toast.LENGTH_SHORT).show();
+
         } else {
             Toast.makeText(this, "Not saved", Toast.LENGTH_SHORT).show();
         }
@@ -366,7 +374,7 @@ public class InfoActivity extends AppCompatActivity {
         return columnString + dataString;
     }
 
-    private void sendMail(String info) {
+    private void exportData(String info) {
         String dataString = getDataInCsv(info);
         String fileName = null;
         switch (info){
@@ -427,4 +435,6 @@ public class InfoActivity extends AppCompatActivity {
         intent.setType("text/html");
         startActivity(intent);
     }
+
+
 }
