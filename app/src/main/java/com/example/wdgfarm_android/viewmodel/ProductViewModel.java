@@ -35,8 +35,6 @@ public class ProductViewModel extends AndroidViewModel {
         repository.delete(product);
     }
 
-//    public Product selectWhere(int id){ return repository.selectWhere(id);}
-
     public void deleteAllProducts(){
         repository.deleteAllProducts();
     }

@@ -19,6 +19,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
 
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.example.wdgfarm_android.R;
@@ -57,6 +58,7 @@ public class InfoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_info);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         ActivityInfoBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_info);
 
@@ -97,6 +99,14 @@ public class InfoActivity extends AppCompatActivity {
                 if (checkPermission()) {
                     exportData(info);
                 }
+            }
+        });
+
+        binding.loadFileBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String a = "aaaa";
+                infoViewModel.info.setValue(a);
             }
         });
 

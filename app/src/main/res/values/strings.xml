@@ -16,6 +16,7 @@
     <string name="product_name">상품명</string>
     <string name="product_price">단가</string>
     <string name="product_date">입고일</string>
+    <string name="current_time">현재 시간</string>
     <string name="total_weight">전체 중량</string>
     <string name="box_weight">박스 중량</string>
     <string name="box_account">박스 수량</string>
@@ -24,6 +25,8 @@
     <string name="real_weight">실 중량</string>
     <string name="toggle_on">저울 연결 해제</string>
     <string name="toggle_off">저울 연결 시도</string>
+    <string name="product_select">상품 정보 선택</string>
+    <string name="company_select">업체 정보 선택</string>
 
 
     <!--계량 내역-->

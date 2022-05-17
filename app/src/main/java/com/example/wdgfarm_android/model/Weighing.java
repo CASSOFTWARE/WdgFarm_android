@@ -1,55 +1,113 @@
 package com.example.wdgfarm_android.model;
 
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
 import java.util.Date;
 
+@Entity(tableName = "Weighing_table")
 public class Weighing {
 
-    private Box box;
-    private Company company;
-    private Product product;
-    private Date date;
+
+
+
+    @PrimaryKey(autoGenerate = true)
+    private int id;
+
+    private int companyID;
+    private int companyCode;
+    private String companyName;
+
+    private int productID;
+    private int productCode;
+    private String productName;
+    private int productPrice;
+
+    private String date;
     private float totalWeight;
+
+    private int boxID;
+    private String boxName;
+    private float boxWeight;
+
     private int boxAccount;
     private float paletteWeight;
     private float deductibleWeight;
-
-
-
     private float realWeight;
 
     public Weighing(){
 
     }
 
-    public Box getBox() {
-        return box;
+    public int getId() {
+        return id;
     }
 
-    public void setBox(Box box) {
-        this.box = box;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public Company getCompany() {
-        return company;
+    public int getCompanyID() {
+        return companyID;
     }
 
-    public void setCompany(Company company) {
-        this.company = company;
+    public void setCompanyID(int companyID) {
+        this.companyID = companyID;
     }
 
-    public Product getProduct() {
-        return product;
+    public int getCompanyCode() {
+        return companyCode;
     }
 
-    public void setProduct(Product product) {
-        this.product = product;
+    public void setCompanyCode(int companyCode) {
+        this.companyCode = companyCode;
     }
 
-    public Date getDate() {
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
+    public int getProductID() {
+        return productID;
+    }
+
+    public void setProductID(int productID) {
+        this.productID = productID;
+    }
+
+    public int getProductCode() {
+        return productCode;
+    }
+
+    public void setProductCode(int productCode) {
+        this.productCode = productCode;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    public int getProductPrice() {
+        return productPrice;
+    }
+
+    public void setProductPrice(int productPrice) {
+        this.productPrice = productPrice;
+    }
+
+    public String getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 
@@ -59,6 +117,30 @@ public class Weighing {
 
     public void setTotalWeight(float totalWeight) {
         this.totalWeight = totalWeight;
+    }
+
+    public int getBoxID() {
+        return boxID;
+    }
+
+    public void setBoxID(int boxID) {
+        this.boxID = boxID;
+    }
+
+    public String getBoxName() {
+        return boxName;
+    }
+
+    public void setBoxName(String boxName) {
+        this.boxName = boxName;
+    }
+
+    public float getBoxWeight() {
+        return boxWeight;
+    }
+
+    public void setBoxWeight(float boxWeight) {
+        this.boxWeight = boxWeight;
     }
 
     public int getBoxAccount() {
@@ -92,5 +174,6 @@ public class Weighing {
     public void setRealWeight(float realWeight) {
         this.realWeight = realWeight;
     }
+
 }
 
