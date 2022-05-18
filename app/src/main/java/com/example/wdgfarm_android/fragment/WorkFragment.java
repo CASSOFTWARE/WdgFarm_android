@@ -37,7 +37,7 @@ public class WorkFragment extends Fragment {
 
     public static Weighing weighing;
     public static WeighingWorkViewModel weighingWorkViewModel;
-
+    public static FragmentWorkBinding binding;
     public WorkFragment(){
 
     }
@@ -48,10 +48,10 @@ public class WorkFragment extends Fragment {
         weighing = new Weighing();
         weighing.setCompanyName("업체를 선택하세요.");
         weighing.setProductName("상품을 선택하세요.");
-        weighing.setProductPrice(1000);
+//        weighing.setProductPrice(1000);
         weighing.setDate("입고일");
 
-        FragmentWorkBinding binding = DataBindingUtil.inflate(inflater, R.layout.fragment_work, container, false);
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_work, container, false);
         View view = binding.getRoot();
         weighingWorkViewModel = new ViewModelProvider(getActivity()).get(WeighingWorkViewModel.class);
         binding.workCompanyBtn.setOnClickListener(new View.OnClickListener() {
@@ -102,14 +102,14 @@ public class WorkFragment extends Fragment {
                 SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd a hh:mm");
 
                 if(checkBox.isChecked()){
-                    weighing.setDate(format.format(date));
+//                    weighing.setDate(format.format(date));
                     binding.workDateBtn.setEnabled(false);
                 }
                 else{
-                    weighing.setDate("입고일");
+//                    weighing.setDate("입고일");
                     binding.workDateBtn.setEnabled(true);
                 }
-                weighingWorkViewModel.weighing.setValue(weighing);
+//                weighingWorkViewModel.weighing.setValue(weighing);
             }
         });
 
@@ -122,6 +122,7 @@ public class WorkFragment extends Fragment {
                 if(checkBox.isChecked()){
                     weighing.setDate(format.format(date));
                     weighingWorkViewModel.weighing.setValue(weighing);
+                    binding.workDateBtn.setTextColor(getResources().getColor(R.color.colorBlack));
                 }
                 else{
                     weighing.setDate(binding.workDateBtn.getText().toString());
@@ -144,6 +145,7 @@ public class WorkFragment extends Fragment {
                     weighing.setCompanyCode(data.getIntExtra(InfoAddActivity.EXTRA_CODE, 0));
                     weighing.setCompanyName(data.getStringExtra(InfoAddActivity.EXTRA_NAME));
 
+                    binding.workCompanyBtn.setTextColor(getResources().getColor(R.color.colorBlack));
                     break;
 
                 //상품
@@ -153,6 +155,7 @@ public class WorkFragment extends Fragment {
                     weighing.setProductName(data.getStringExtra(InfoAddActivity.EXTRA_NAME));
                     weighing.setProductPrice(data.getIntExtra(InfoAddActivity.EXTRA_VALUE, 1000));
 
+                    binding.workProductBtn.setTextColor(getResources().getColor(R.color.colorBlack));
                     break;
             }
             weighingWorkViewModel.weighing.setValue(weighing);

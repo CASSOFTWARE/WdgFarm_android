@@ -6,10 +6,18 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.CheckBox;
+import android.widget.EditText;
 
 import com.example.wdgfarm_android.R;
 import com.example.wdgfarm_android.adapter.CompanyAdapter;
@@ -29,6 +37,9 @@ public class SelectActivity extends AppCompatActivity {
 
     private ProductViewModel productViewModel;
     private CompanyViewModel companyViewModel;
+    private ProductSelectAdapter productSelectAdapter;
+    private CompanySelectAdapter companySelectAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,8 +54,8 @@ public class SelectActivity extends AppCompatActivity {
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
         binding.recyclerView.setHasFixedSize(true);
 
-        CompanySelectAdapter companySelectAdapter = new CompanySelectAdapter();
-        ProductSelectAdapter productSelectAdapter = new ProductSelectAdapter();
+        companySelectAdapter = new CompanySelectAdapter();
+        productSelectAdapter = new ProductSelectAdapter();
 
         binding.selectBackBtn.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -64,7 +75,6 @@ public class SelectActivity extends AppCompatActivity {
                 binding.recyclerView.setAdapter(productSelectAdapter);
                 break;
         }
-
 
         companyViewModel = new ViewModelProvider(this).get(CompanyViewModel.class);
         companyViewModel.getAllCompanys().observe(this, new Observer<List<Company>>() {
@@ -109,5 +119,67 @@ public class SelectActivity extends AppCompatActivity {
             }
         });
 
+
+        EditText editText = (EditText)findViewById(R.id.select_edit) ;
+
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                searchDatabase(editable.toString(), info);
+            }
+        });
+    }
+
+    private void searchDatabase(String query, int info){
+        String searchQuery = "%" + query + "%";
+        switch (info){
+            case 100:
+                companyViewModel.getFiltterCompanys(searchQuery).observe(this, new Observer<List<Company>>() {
+                    @Override
+                    public void onChanged(List<Company> companies) {
+                        companySelectAdapter.setCompanys(companies);
+                    }
+                });
+                break;
+
+            case 200:
+                productViewModel.getFiltterProducts(searchQuery).observe(this, new Observer<List<Product>>() {
+                    @Override
+                    public void onChanged(List<Product> products) {
+                        productSelectAdapter.setProducts(products);
+                    }
+                });
+                break;
+        }
+
+    }
+
+    //화면 터치시 키보드 감추기
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        hideKeyboard();
+        return super.dispatchTouchEvent(ev);
+    }
+
+    //키보드 감추기
+    private void hideKeyboard() {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+        //Find the currently focused view, so we can grab the correct window token from it.
+        View view = getCurrentFocus();
+        //If no view currently has focus, create a new one, just so we can grab a window token from it
+        if (view == null) {
+            view = new View(this);
+        }
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 }

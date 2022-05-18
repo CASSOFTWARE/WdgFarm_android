@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import androidx.lifecycle.LiveData;
 
 import com.example.wdgfarm_android.model.Company;
+import com.example.wdgfarm_android.model.Product;
 
 import java.util.List;
 
@@ -37,6 +38,10 @@ public class CompanyRepository {
 
     public LiveData<List<Company>> getAllCompanys(){
         return allCompanys;
+    }
+
+    public LiveData<List<Company>> getFiltterCompanys(String arg) {
+        return companyDao.getFiltterCompanys(arg);
     }
 
     private static class InsertCompanyAsyncTask extends AsyncTask<Company, Void, Void> {

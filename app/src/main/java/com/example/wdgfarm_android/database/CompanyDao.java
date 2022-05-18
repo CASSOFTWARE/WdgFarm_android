@@ -9,6 +9,7 @@ import androidx.room.Update;
 
 import com.example.wdgfarm_android.model.Company;
 import com.example.wdgfarm_android.model.Company;
+import com.example.wdgfarm_android.model.Product;
 
 import java.util.List;
 
@@ -30,4 +31,7 @@ public interface CompanyDao {
 
     @Query("SELECT * FROM company_table")
     LiveData<List<Company>> getAllCompanys();
+
+    @Query("SELECT * FROM company_table WHERE name LIKE :arg")
+    LiveData<List<Company>> getFiltterCompanys(String arg);
 }

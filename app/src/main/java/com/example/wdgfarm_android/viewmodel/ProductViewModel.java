@@ -42,4 +42,8 @@ public class ProductViewModel extends AndroidViewModel {
     public LiveData<List<Product>> getAllProducts(){
         return allProducts;
     }
+
+    public LiveData<List<Product>> getFiltterProducts(String arg){
+        return repository.getFiltterProducts(arg);
+    }
 }

@@ -29,4 +29,7 @@ public interface ProductDao {
 
     @Query("SELECT * FROM product_table")
     LiveData<List<Product>> getAllProducts();
+
+    @Query("SELECT * FROM product_table WHERE name LIKE :arg")
+    LiveData<List<Product>> getFiltterProducts(String arg);
 }

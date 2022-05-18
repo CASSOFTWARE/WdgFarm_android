@@ -13,68 +13,74 @@ public class ProductRepository {
     private ProductDao productDao;
     private LiveData<List<Product>> allProducts;
 
-    public ProductRepository(Application application){
+    public ProductRepository(Application application) {
         ProductDatabase database = ProductDatabase.getInstance(application);
         productDao = database.productDao();
         allProducts = productDao.getAllProducts();
     }
 
-    public void insert(Product product){
+    public void insert(Product product) {
         new InsertProductAsyncTask(productDao).execute(product);
     }
 
-    public void update(Product product){
+    public void update(Product product) {
         new UpdateProductAsyncTask(productDao).execute(product);
     }
 
-    public void delete(Product product){
+    public void delete(Product product) {
         new DeleteProductAsyncTask(productDao).execute(product);
     }
 
 
-    public void deleteAllProducts(){
+    public void deleteAllProducts() {
         new DeleteAllProductsAsyncTask(productDao).execute();
     }
 
-    public LiveData<List<Product>> getAllProducts(){
+    public LiveData<List<Product>> getAllProducts() {
         return allProducts;
+    }
+
+    public LiveData<List<Product>> getFiltterProducts(String arg) {
+        return productDao.getFiltterProducts(arg);
     }
 
     private static class InsertProductAsyncTask extends AsyncTask<Product, Void, Void> {
         private ProductDao productDao;
 
-        private InsertProductAsyncTask(ProductDao productDao){
+        private InsertProductAsyncTask(ProductDao productDao) {
             this.productDao = productDao;
         }
 
         @Override
-        protected Void doInBackground(Product... products){
+        protected Void doInBackground(Product... products) {
             productDao.insert(products[0]);
             return null;
         }
     }
+
     private static class UpdateProductAsyncTask extends AsyncTask<Product, Void, Void> {
         private ProductDao productDao;
 
-        private UpdateProductAsyncTask(ProductDao productDao){
+        private UpdateProductAsyncTask(ProductDao productDao) {
             this.productDao = productDao;
         }
 
         @Override
-        protected Void doInBackground(Product... products){
+        protected Void doInBackground(Product... products) {
             productDao.update(products[0]);
             return null;
         }
     }
+
     private static class DeleteProductAsyncTask extends AsyncTask<Product, Void, Void> {
         private ProductDao productDao;
 
-        private DeleteProductAsyncTask(ProductDao productDao){
+        private DeleteProductAsyncTask(ProductDao productDao) {
             this.productDao = productDao;
         }
 
         @Override
-        protected Void doInBackground(Product... products){
+        protected Void doInBackground(Product... products) {
             productDao.delete(products[0]);
             return null;
         }
@@ -83,12 +89,12 @@ public class ProductRepository {
     private static class DeleteAllProductsAsyncTask extends AsyncTask<Product, Void, Void> {
         private ProductDao productDao;
 
-        private DeleteAllProductsAsyncTask(ProductDao productDao){
+        private DeleteAllProductsAsyncTask(ProductDao productDao) {
             this.productDao = productDao;
         }
 
         @Override
-        protected Void doInBackground(Product... voids){
+        protected Void doInBackground(Product... voids) {
             productDao.deleteAllProducts();
             return null;
         }
