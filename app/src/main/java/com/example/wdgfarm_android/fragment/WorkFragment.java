@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,6 +25,7 @@ import com.example.wdgfarm_android.activity.SelectActivity;
 import com.example.wdgfarm_android.databinding.FragmentWorkBinding;
 import com.example.wdgfarm_android.model.Weighing;
 import com.example.wdgfarm_android.utils.DatetimePickerFragment;
+import com.example.wdgfarm_android.viewmodel.WeighingViewModel;
 import com.example.wdgfarm_android.viewmodel.WeighingWorkViewModel;
 
 import java.text.SimpleDateFormat;
@@ -34,7 +36,11 @@ public class WorkFragment extends Fragment {
     public static final int INFO_PRODUCT = 200;
 
     private static final int REQUEST_DATE = 1;
+    private static final String INIT_COMPANY = "업체를 선택하세요.";
+    private static final String INIT_PRODUCT = "상품을 선택하세요.";
+    private static final String INIT_DATE = "입고일";
 
+    private WeighingViewModel weighingViewModel;
     public static Weighing weighing;
     public static WeighingWorkViewModel weighingWorkViewModel;
     public static FragmentWorkBinding binding;
@@ -46,13 +52,13 @@ public class WorkFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         weighing = new Weighing();
-        weighing.setCompanyName("업체를 선택하세요.");
-        weighing.setProductName("상품을 선택하세요.");
-//        weighing.setProductPrice(1000);
-        weighing.setDate("입고일");
+        weighing.setCompanyName(INIT_COMPANY);
+        weighing.setProductName(INIT_PRODUCT);
+        weighing.setDate(INIT_DATE);
 
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_work, container, false);
         View view = binding.getRoot();
+        weighingViewModel = new ViewModelProvider(getActivity()).get(WeighingViewModel.class);
         weighingWorkViewModel = new ViewModelProvider(getActivity()).get(WeighingWorkViewModel.class);
         binding.workCompanyBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -98,18 +104,13 @@ public class WorkFragment extends Fragment {
         checkBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Date date = new Date(System.currentTimeMillis());
-                SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd a hh:mm");
 
                 if(checkBox.isChecked()){
-//                    weighing.setDate(format.format(date));
                     binding.workDateBtn.setEnabled(false);
                 }
                 else{
-//                    weighing.setDate("입고일");
                     binding.workDateBtn.setEnabled(true);
                 }
-//                weighingWorkViewModel.weighing.setValue(weighing);
             }
         });
 
@@ -127,6 +128,25 @@ public class WorkFragment extends Fragment {
                 else{
                     weighing.setDate(binding.workDateBtn.getText().toString());
                 }
+
+                if (!binding.workProductBtn.getText().toString().contains(INIT_PRODUCT) && !binding.workSaveBtn.getText().toString().contains(INIT_COMPANY) && !binding.workDateBtn.getText().toString().contains(INIT_DATE)) {
+                    weighing.setTotalWeight(Float.parseFloat(binding.totalWeightValue.getText().toString().replace(" kg","")));
+                    weighing.setBoxWeight(Float.parseFloat(binding.boxWeightValue.getText().toString().replace(" kg","")));
+                    weighing.setBoxAccount(Integer.parseInt(binding.boxAccountValue.getText().toString()));
+                    weighing.setPaletteWeight(Float.parseFloat(binding.paletteWeightValue.getText().toString().replace(" kg","")));
+                    weighing.setDeductibleWeight(Float.parseFloat(binding.deductibleWeightValue.getText().toString().replace(" kg","")));
+                    weighing.setRealWeight(Float.parseFloat(binding.realWeightValue.getText().toString().replace(" kg","")));
+
+                    weighingWorkViewModel.weighing.setValue(weighing);
+
+                    weighingViewModel.insert(weighing);
+
+                    Toast.makeText(getContext(), "저장되었습니다.", Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    Toast.makeText(getContext(), "빈칸빈칸", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
 
