@@ -11,12 +11,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.wdgfarm_android.R;
 import com.example.wdgfarm_android.model.Weighing;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 public class WeighingAdapter extends RecyclerView.Adapter<WeighingAdapter.WeighingHolder> {
     private List<Weighing> weighings = new ArrayList<>();
     private OnItemClickListener listener;
+    private SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd a hh:mm");
 
     @NonNull
     @Override
@@ -30,7 +32,7 @@ public class WeighingAdapter extends RecyclerView.Adapter<WeighingAdapter.Weighi
     @Override
     public void onBindViewHolder(@NonNull WeighingHolder holder, int position) {
         Weighing currentWeighing = weighings.get(position);
-        holder.textViewDate.setText(String.valueOf(currentWeighing.getDate()));
+        holder.textViewDate.setText(format.format(currentWeighing.getDate()));
         holder.textViewCompany.setText(currentWeighing.getCompanyName());
         holder.textViewProduct.setText(currentWeighing.getProductName());
         holder.textViewWeight.setText(String.valueOf(currentWeighing.getRealWeight())+" kg");

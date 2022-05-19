@@ -9,6 +9,7 @@ import androidx.lifecycle.LiveData;
 import com.example.wdgfarm_android.database.WeighingRepository;
 import com.example.wdgfarm_android.model.Weighing;
 
+import java.util.Date;
 import java.util.List;
 
 public class WeighingViewModel extends AndroidViewModel {
@@ -40,6 +41,8 @@ public class WeighingViewModel extends AndroidViewModel {
     public void deleteAllWeighings(){
         repository.deleteAllWeighings();
     }
+
+    public LiveData<List<Weighing>> getFitterDateWeighings(Long from, Long to){ return repository.getFitterDateWeighings(from, to);}
 
     public LiveData<List<Weighing>> getAllWeighings(){
         return allWeighings;

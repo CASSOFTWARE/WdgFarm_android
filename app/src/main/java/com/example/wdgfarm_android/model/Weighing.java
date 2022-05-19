@@ -5,6 +5,9 @@ import android.os.Parcelable;
 
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
+import androidx.room.TypeConverters;
+
+import com.example.wdgfarm_android.utils.RoomTypeConverter;
 
 import java.util.Date;
 
@@ -24,7 +27,9 @@ public class Weighing {
     private String productName;
     private int productPrice;
 
-    private String date;
+    @TypeConverters({RoomTypeConverter.class})
+    private Date date;
+
     private float totalWeight;
 
     private int boxID;
@@ -103,11 +108,11 @@ public class Weighing {
         this.productPrice = productPrice;
     }
 
-    public String getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 
@@ -175,4 +180,3 @@ public class Weighing {
         this.realWeight = realWeight;
     }
 }
-

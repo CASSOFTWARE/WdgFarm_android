@@ -9,6 +9,7 @@ import androidx.room.Update;
 
 import com.example.wdgfarm_android.model.Weighing;
 
+import java.util.Date;
 import java.util.List;
 
 
@@ -29,6 +30,9 @@ public interface WeighingDao {
 
 //    @Query("SELECT * FROM weighing_table WHERE id = :id")
 //    Weighing selectWhere(int id);
+
+    @Query("SELECT * FROM weighing_table WHERE date BETWEEN :from AND :to")
+    LiveData<List<Weighing>> getFitterDateWeighings(Long from, Long to);
 
     @Query("SELECT * FROM weighing_table")
     LiveData<List<Weighing>> getAllWeighings();

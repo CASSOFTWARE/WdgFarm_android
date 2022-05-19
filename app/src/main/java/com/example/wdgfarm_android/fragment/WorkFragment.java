@@ -4,6 +4,7 @@ import static android.app.Activity.RESULT_OK;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,12 +15,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentResultListener;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.wdgfarm_android.R;
-import com.example.wdgfarm_android.activity.InfoActivity;
 import com.example.wdgfarm_android.activity.InfoAddActivity;
 import com.example.wdgfarm_android.activity.SelectActivity;
 import com.example.wdgfarm_android.databinding.FragmentWorkBinding;
@@ -28,7 +27,9 @@ import com.example.wdgfarm_android.utils.DatetimePickerFragment;
 import com.example.wdgfarm_android.viewmodel.WeighingViewModel;
 import com.example.wdgfarm_android.viewmodel.WeighingWorkViewModel;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 public class WorkFragment extends Fragment {
@@ -54,7 +55,9 @@ public class WorkFragment extends Fragment {
         weighing = new Weighing();
         weighing.setCompanyName(INIT_COMPANY);
         weighing.setProductName(INIT_PRODUCT);
-        weighing.setDate(INIT_DATE);
+        weighing.setDate(Calendar.getInstance().getTime());
+
+        SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd a hh:mm");
 
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_work, container, false);
         View view = binding.getRoot();
@@ -86,7 +89,7 @@ public class WorkFragment extends Fragment {
                 binding.workCompanyBtn.setText(weighing.getCompanyName());
                 binding.workProductBtn.setText(weighing.getProductName());
                 binding.workPriceEdit.setText(String.valueOf(weighing.getProductPrice()));
-                binding.workDateBtn.setText(weighing.getDate());
+                binding.workDateBtn.setText(format.format(weighing.getDate()));
             }
         });
 
@@ -118,15 +121,18 @@ public class WorkFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Date date = new Date(System.currentTimeMillis());
-                SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd a hh:mm");
 
                 if(checkBox.isChecked()){
-                    weighing.setDate(format.format(date));
+                    weighing.setDate(date);
                     weighingWorkViewModel.weighing.setValue(weighing);
                     binding.workDateBtn.setTextColor(getResources().getColor(R.color.colorBlack));
                 }
                 else{
-                    weighing.setDate(binding.workDateBtn.getText().toString());
+                    try {
+                        weighing.setDate(format.parse(binding.workDateBtn.getText().toString()));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
                 }
 
                 if (!binding.workProductBtn.getText().toString().contains(INIT_PRODUCT) && !binding.workSaveBtn.getText().toString().contains(INIT_COMPANY) && !binding.workDateBtn.getText().toString().contains(INIT_DATE)) {
