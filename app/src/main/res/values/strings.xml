@@ -37,6 +37,9 @@
     <string name="today">오늘</string>
     <string name="week">1주일</string>
     <string name="no_data_available">데이터가 없습니다.</string>
+    <string name="measurement_detail">계량 상세 정보</string>
+    <string name="erp_time">ERP 연동 시간</string>
+
 
     <!--기초 자료-->
     <string name="basic_data">기초 자료</string>

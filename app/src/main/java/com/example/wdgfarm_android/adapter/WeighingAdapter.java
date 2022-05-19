@@ -33,7 +33,7 @@ public class WeighingAdapter extends RecyclerView.Adapter<WeighingAdapter.Weighi
         holder.textViewDate.setText(String.valueOf(currentWeighing.getDate()));
         holder.textViewCompany.setText(currentWeighing.getCompanyName());
         holder.textViewProduct.setText(currentWeighing.getProductName());
-        holder.textViewWeight.setText(String.valueOf(currentWeighing.getRealWeight()));
+        holder.textViewWeight.setText(String.valueOf(currentWeighing.getRealWeight())+" kg");
     }
 
     @Override

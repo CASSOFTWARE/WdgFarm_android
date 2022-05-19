@@ -1,5 +1,8 @@
 package com.example.wdgfarm_android.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
@@ -7,8 +10,6 @@ import java.util.Date;
 
 @Entity(tableName = "Weighing_table")
 public class Weighing {
-
-
 
 
     @PrimaryKey(autoGenerate = true)
@@ -35,8 +36,7 @@ public class Weighing {
     private float deductibleWeight;
     private float realWeight;
 
-    public Weighing(){
-
+    public Weighing() {
     }
 
     public int getId() {
@@ -174,6 +174,5 @@ public class Weighing {
     public void setRealWeight(float realWeight) {
         this.realWeight = realWeight;
     }
-
 }
 

@@ -15,6 +15,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.WdgFarm_Android">
         <activity
+            android:name=".activity.DetailActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.SelectActivity"
             android:exported="false" />
         <activity
