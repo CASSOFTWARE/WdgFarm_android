@@ -48,6 +48,7 @@ public class SpinnerAdapter extends BaseAdapter {
         return view;
     }
 
+
     @Override
     public View getDropDownView(int i, View view, ViewGroup viewGroup) {
         if(view==null){

@@ -36,4 +36,11 @@ public interface WeighingDao {
 
     @Query("SELECT * FROM weighing_table")
     LiveData<List<Weighing>> getAllWeighings();
+
+    @Query("SELECT * FROM weighing_table WHERE date BETWEEN :from AND :to AND companyName LIKE :arg")
+    LiveData<List<Weighing>> getFitterCompanyWeighings(Long from, Long to, String arg);
+
+    @Query("SELECT * FROM weighing_table WHERE date BETWEEN :from AND :to AND productName LIKE :arg")
+    LiveData<List<Weighing>> getFitterProductWeighings(Long from, Long to, String arg);
+
 }

@@ -9,7 +9,7 @@ import java.util.Date;
 public class HistoryViewModel extends ViewModel {
     public MutableLiveData<Date> dateFrom = new MutableLiveData<>();
     public MutableLiveData<Date> dateTo = new MutableLiveData<>();
-
+    public MutableLiveData<String> spinnerData = new MutableLiveData<>();
     private Calendar calendarFrom = Calendar.getInstance();
     private Calendar calendarTo = Calendar.getInstance();
 
@@ -20,6 +20,7 @@ public class HistoryViewModel extends ViewModel {
         calendarTo.set(Calendar.HOUR_OF_DAY, 23);
         calendarTo.set(Calendar.MINUTE, 59);
         calendarTo.set(Calendar.SECOND, 59);
+        spinnerData.setValue("전체");
         dateFrom.setValue(calendarFrom.getTime());
         dateTo.setValue(calendarTo.getTime());
     }

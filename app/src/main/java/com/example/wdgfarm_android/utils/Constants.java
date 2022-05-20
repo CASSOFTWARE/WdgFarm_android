@@ -6,4 +6,10 @@ public class Constants {
         TODAY,
         WEEK,
     }
+
+    public static enum SPINNER_DATA {
+        ALL,
+        COMPNAY,
+        PRODUCT
+    }
 }

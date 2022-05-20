@@ -45,6 +45,14 @@ public class WeighingRepository {
         return allWeighings;
     }
 
+    public LiveData<List<Weighing>> getFitterCompanyWeighings(Long from, Long to, String arg){
+        return weighingDao.getFitterCompanyWeighings(from, to, arg);
+    }
+
+    public LiveData<List<Weighing>> getFitterProductWeighings(Long from, Long to, String arg){
+        return weighingDao.getFitterProductWeighings(from, to, arg);
+    }
+
     private static class InsertWeighingAsyncTask extends AsyncTask<Weighing, Void, Void> {
         private WeighingDao weighingDao;
 

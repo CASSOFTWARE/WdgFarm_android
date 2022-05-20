@@ -15,6 +15,8 @@ import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.Spinner;
 
 import com.example.wdgfarm_android.R;
 import com.example.wdgfarm_android.activity.DetailActivity;
@@ -42,8 +44,6 @@ public class HistoryFragment extends Fragment {
     private static final int REQUEST_FROM_DATE = 1;
     private static final int REQUEST_TO_DATE = 2;
 
-    //    private Date dateFrom;
-//    private Date dateTo;
     private SimpleDateFormat dateFormat;    //  2022/05/20
     private SimpleDateFormat format;        //  2022/05/20 오후 5:15
 
@@ -89,7 +89,8 @@ public class HistoryFragment extends Fragment {
             @Override
             public void onChanged(Date date) {
                 binding.buttonSearchDateFrom.setText(dateFormat.format(historyViewModel.dateFrom.getValue()));
-
+                binding.searchEdittext.setText("");
+                binding.historySpinner.setSelection(0);
                 weighingViewModel.getFitterDateWeighings(date.getTime(), historyViewModel.dateTo.getValue().getTime()).observe(getActivity(), new Observer<List<Weighing>>() {
                     @Override
                     public void onChanged(List<Weighing> weighings) {
@@ -103,7 +104,8 @@ public class HistoryFragment extends Fragment {
             @Override
             public void onChanged(Date date) {
                 binding.buttonSearchDateTo.setText(dateFormat.format(historyViewModel.dateTo.getValue()));
-
+                binding.searchEdittext.setText("");
+                binding.historySpinner.setSelection(0);
                 weighingViewModel.getFitterDateWeighings(historyViewModel.dateFrom.getValue().getTime(), date.getTime()).observe(getActivity(), new Observer<List<Weighing>>() {
                     @Override
                     public void onChanged(List<Weighing> weighings) {
@@ -133,6 +135,7 @@ public class HistoryFragment extends Fragment {
                 setSearchRange(Constants.DATE_RANGE.WEEK);
             }
         });
+
         binding.buttonSearchDateFrom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -156,6 +159,18 @@ public class HistoryFragment extends Fragment {
         });
 
         binding.historySpinner.setAdapter(spinnerAdapter);
+        binding.historySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                historyViewModel.spinnerData.setValue(adapterView.getItemAtPosition(i).toString());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
         weighingAdapter.setOnItemClickListener(new WeighingAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(Weighing weighing) {
@@ -184,6 +199,53 @@ public class HistoryFragment extends Fragment {
                 intent.putExtra(DetailActivity.EXTRA_REAL_WEIGHT, weighing.getRealWeight());
 
                 startActivity(intent);
+            }
+        });
+
+        historyViewModel.spinnerData.observe(getActivity(), new Observer<String>() {
+            @Override
+            public void onChanged(String s) {
+                binding.searchEdittext.setText("");
+                if(s == "전체"){
+                    binding.searchEdittext.setEnabled(false);
+                }else{
+                    binding.searchEdittext.setEnabled(true);
+                }
+            }
+        });
+        binding.buttonSearchDetail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String arg = "%" + binding.searchEdittext.getText().toString() + "%";
+                switch (historyViewModel.spinnerData.getValue()){
+                    case "전체":
+                        weighingViewModel.getFitterDateWeighings(historyViewModel.dateFrom.getValue().getTime(), historyViewModel.dateTo.getValue().getTime()).observe(getActivity(), new Observer<List<Weighing>>() {
+                            @Override
+                            public void onChanged(List<Weighing> weighings) {
+                                weighingAdapter.setWeighings(weighings);
+                            }
+                        });
+                        break;
+                    case "업체":
+                        weighingViewModel.getFitterCompanyWeighings(historyViewModel.dateFrom.getValue().getTime(), historyViewModel.dateTo.getValue().getTime(), arg).observe(getActivity(), new Observer<List<Weighing>>() {
+                            @Override
+                            public void onChanged(List<Weighing> weighings) {
+                                weighingAdapter.setWeighings(weighings);
+                            }
+                        });
+                        break;
+                    case "상품":
+                        weighingViewModel.getFitterProductWeighings(historyViewModel.dateFrom.getValue().getTime(), historyViewModel.dateTo.getValue().getTime(), arg).observe(getActivity(), new Observer<List<Weighing>>() {
+                            @Override
+                            public void onChanged(List<Weighing> weighings) {
+                                weighingAdapter.setWeighings(weighings);
+                            }
+                        });
+                        break;
+                    default:
+                        break;
+                }
+
             }
         });
         return view;
