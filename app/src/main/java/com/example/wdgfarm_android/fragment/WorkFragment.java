@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -40,11 +41,14 @@ public class WorkFragment extends Fragment {
     private static final String INIT_COMPANY = "업체를 선택하세요.";
     private static final String INIT_PRODUCT = "상품을 선택하세요.";
     private static final String INIT_DATE = "입고일";
+    private static final String DIALOG_DATE = "DataTimePicker Dialog";
 
     private WeighingViewModel weighingViewModel;
+    private SimpleDateFormat format;
     public static Weighing weighing;
     public static WeighingWorkViewModel weighingWorkViewModel;
     public static FragmentWorkBinding binding;
+
     public WorkFragment(){
 
     }
@@ -57,7 +61,7 @@ public class WorkFragment extends Fragment {
         weighing.setProductName(INIT_PRODUCT);
         weighing.setDate(Calendar.getInstance().getTime());
 
-        SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd a hh:mm");
+        format = new SimpleDateFormat("yyyy/MM/dd a hh:mm");
 
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_work, container, false);
         View view = binding.getRoot();
@@ -96,9 +100,11 @@ public class WorkFragment extends Fragment {
         binding.workDateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DatetimePickerFragment dialog = new DatetimePickerFragment();
+                FragmentManager manager = getFragmentManager();
+                DatetimePickerFragment dialog = DatetimePickerFragment.newInstance();
+                dialog.setTargetFragment(WorkFragment.this, REQUEST_DATE);
 
-                dialog.show(getChildFragmentManager(), "DataTimePicker Dialog");
+                dialog.show(manager, "DataTimePicker Dialog");
             }
         });
 
@@ -183,6 +189,14 @@ public class WorkFragment extends Fragment {
 
                     binding.workProductBtn.setTextColor(getResources().getColor(R.color.colorBlack));
                     break;
+
+                default:
+                    break;
+            }
+            if(requestCode == REQUEST_DATE) {
+                Date date = (Date) data.getSerializableExtra(DatetimePickerFragment.EXTRA_DATE);
+                weighing.setDate(date);
+                binding.workDateBtn.setTextColor(getResources().getColor(R.color.colorBlack));
             }
             weighingWorkViewModel.weighing.setValue(weighing);
 

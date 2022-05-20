@@ -33,7 +33,6 @@ import java.util.Objects;
 
 public class DatetimePickerFragment extends DialogFragment {
 
-    public static final String ARG_DATE = "com.example.wdgfarm_android.ARG_DATE";
     public static final String EXTRA_DATE = "com.example.wdgfarm_android.EXTRA_DATE";
 
     private DatePicker datePicker;
@@ -42,6 +41,12 @@ public class DatetimePickerFragment extends DialogFragment {
     public DatetimePickerFragment() {
     }
 
+    public static DatetimePickerFragment newInstance() {
+        Bundle args = new Bundle();
+        DatetimePickerFragment fragment = new DatetimePickerFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @NonNull
     @Override
@@ -65,8 +70,13 @@ public class DatetimePickerFragment extends DialogFragment {
                                 int day = datePicker.getDayOfMonth();
                                 int hour = timePicker.getHour();
                                 int min = timePicker.getMinute();
-
-                                Date date = new GregorianCalendar(year, month, day).getTime();
+                                Calendar calendar = Calendar.getInstance();
+                                calendar.set(Calendar.YEAR, year);
+                                calendar.set(Calendar.MONTH, month);
+                                calendar.set(Calendar.DAY_OF_MONTH, day);
+                                calendar.set(Calendar.HOUR_OF_DAY, hour);
+                                calendar.set(Calendar.MINUTE, min);
+                                Date date = calendar.getTime();
                                 sendResult(Activity.RESULT_OK, date);
                             }
                         })

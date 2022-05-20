@@ -28,19 +28,16 @@ public interface WeighingDao {
     @Query("DELETE FROM weighing_table")
     void deleteAllWeighings();
 
-//    @Query("SELECT * FROM weighing_table WHERE id = :id")
-//    Weighing selectWhere(int id);
-
-    @Query("SELECT * FROM weighing_table WHERE date BETWEEN :from AND :to")
+    @Query("SELECT * FROM weighing_table WHERE date BETWEEN :from AND :to ORDER BY date DESC")
     LiveData<List<Weighing>> getFitterDateWeighings(Long from, Long to);
 
-    @Query("SELECT * FROM weighing_table")
+    @Query("SELECT * FROM weighing_table ORDER BY date DESC")
     LiveData<List<Weighing>> getAllWeighings();
 
-    @Query("SELECT * FROM weighing_table WHERE date BETWEEN :from AND :to AND companyName LIKE :arg")
+    @Query("SELECT * FROM weighing_table WHERE date BETWEEN :from AND :to AND companyName LIKE :arg ORDER BY date DESC")
     LiveData<List<Weighing>> getFitterCompanyWeighings(Long from, Long to, String arg);
 
-    @Query("SELECT * FROM weighing_table WHERE date BETWEEN :from AND :to AND productName LIKE :arg")
+    @Query("SELECT * FROM weighing_table WHERE date BETWEEN :from AND :to AND productName LIKE :arg ORDER BY date DESC")
     LiveData<List<Weighing>> getFitterProductWeighings(Long from, Long to, String arg);
 
 }

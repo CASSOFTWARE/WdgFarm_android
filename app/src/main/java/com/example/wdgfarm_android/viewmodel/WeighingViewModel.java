@@ -36,8 +36,6 @@ public class WeighingViewModel extends AndroidViewModel {
         repository.delete(weighing);
     }
 
-//    public Weighing selectWhere(int id){ return repository.selectWhere(id);}
-
     public void deleteAllWeighings(){
         repository.deleteAllWeighings();
     }
