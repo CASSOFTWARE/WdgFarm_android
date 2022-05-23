@@ -8,11 +8,11 @@ public class Product {
 
     @PrimaryKey(autoGenerate = true)
     private int id;
-    private int code;
+    private String code;
     private String name;
     private int price;
 
-    public Product (int code, String name, int price){
+    public Product (String code, String name, int price){
         this.code = code;
         this.name = name;
         this.price = price;
@@ -26,11 +26,11 @@ public class Product {
         this.id = id;
     }
 
-    public int getCode() {
+    public String getCode() {
         return code;
     }
 
-    public void setCode(int code) {
+    public void setCode(String code) {
         this.code = code;
     }
 

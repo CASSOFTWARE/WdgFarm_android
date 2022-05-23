@@ -77,7 +77,7 @@ public class InfoAddActivity extends AppCompatActivity {
         }
 
         if(intent.hasExtra(EXTRA_ID)){
-            binding.infoAddCodeValue.setText(String.valueOf(intent.getIntExtra(EXTRA_CODE, 0)));
+            binding.infoAddCodeValue.setText(String.valueOf(intent.getStringExtra(EXTRA_CODE)));
             binding.infoAddNameValue.setText(intent.getStringExtra(EXTRA_NAME));
             binding.infoAddValue.setText(String.valueOf(intent.getIntExtra(EXTRA_VALUE, 1000)));
         }
@@ -94,7 +94,7 @@ public class InfoAddActivity extends AppCompatActivity {
                         if(_checkBlank(binding, info)){
                             Intent data = new Intent();
                             data.putExtra("info", info);
-                            data.putExtra(EXTRA_CODE, parseInt(binding.infoAddCodeValue.getText().toString()));
+                            data.putExtra(EXTRA_CODE, binding.infoAddCodeValue.getText().toString());
                             data.putExtra(EXTRA_NAME, binding.infoAddNameValue.getText().toString());
                             data.putExtra(EXTRA_VALUE, parseInt(binding.infoAddValue.getText().toString()));
 
@@ -111,7 +111,7 @@ public class InfoAddActivity extends AppCompatActivity {
                         if(_checkBlank(binding, info)){
                             Intent data = new Intent();
                             data.putExtra("info", info);
-                            data.putExtra(EXTRA_CODE, parseInt(binding.infoAddCodeValue.getText().toString()));
+                            data.putExtra(EXTRA_CODE, binding.infoAddCodeValue.getText().toString());
                             data.putExtra(EXTRA_NAME, binding.infoAddNameValue.getText().toString());
 
                             int id = getIntent().getIntExtra(EXTRA_ID, -1);

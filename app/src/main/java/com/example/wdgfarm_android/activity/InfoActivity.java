@@ -3,6 +3,8 @@ package com.example.wdgfarm_android.activity;
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -12,11 +14,14 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.View;
 
 import android.view.WindowManager;
@@ -31,17 +36,24 @@ import com.example.wdgfarm_android.databinding.ActivityInfoBinding;
 import com.example.wdgfarm_android.model.Box;
 import com.example.wdgfarm_android.model.Company;
 import com.example.wdgfarm_android.model.Product;
+import com.example.wdgfarm_android.utils.ExcelHelper;
 import com.example.wdgfarm_android.viewmodel.BoxViewModel;
 import com.example.wdgfarm_android.viewmodel.CompanyViewModel;
 import com.example.wdgfarm_android.viewmodel.InfoViewModel;
 import com.example.wdgfarm_android.viewmodel.ProductViewModel;
 
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
@@ -54,18 +66,42 @@ public class InfoActivity extends AppCompatActivity {
     private CompanyViewModel companyViewModel;
     private BoxViewModel boxViewModel;
 
+    private String info;
+    ActivityResultLauncher<Intent> filePicker;
+
+    private static String extensionXLXS = "XLXS";
+
+    static {
+        System.setProperty(
+                "org.apache.poi.javax.xml.stream.XMLInputFactory",
+                "com.fasterxml.aalto.stax.InputFactoryImpl"
+        );
+        System.setProperty(
+                "org.apache.poi.javax.xml.stream.XMLOutputFactory",
+                "com.fasterxml.aalto.stax.OutputFactoryImpl"
+        );
+        System.setProperty(
+                "org.apache.poi.javax.xml.stream.XMLEventFactory",
+                "com.fasterxml.aalto.stax.EventFactoryImpl"
+        );
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_info);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
+        ProductAdapter productAdapter = new ProductAdapter();
+        CompanyAdapter companyAdapter = new CompanyAdapter();
+        BoxAdapter boxAdapter = new BoxAdapter();
+
         ActivityInfoBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_info);
 
         Intent intent = getIntent();
         InfoViewModel infoViewModel = new ViewModelProvider(this).get(InfoViewModel.class);
 
-        String info = intent.getExtras().getString("info");
+        info = intent.getExtras().getString("info");
 
         infoViewModel.info.setValue(info);
 
@@ -75,6 +111,24 @@ public class InfoActivity extends AppCompatActivity {
                 binding.infoTitle.setText(infoViewModel.info.getValue() + "");
             }
         });
+
+        filePicker = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Intent intentExcel = result.getData();
+                        Uri uri = intentExcel.getData();
+
+                        readExcelFile(InfoActivity.this, uri);
+//                        companyViewModel.getAllCompanys().observe(this, new Observer<List<Company>>() {
+//                            @Override
+//                            public void onChanged(List<Company> company) {
+//                                companyAdapter.setCompanys(company);
+//                            }
+//                        });
+                        //TODO: room 데이터 초기화 후 읽은 데이터 insert
+                    }
+                });
 
         binding.infoAddBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,17 +159,14 @@ public class InfoActivity extends AppCompatActivity {
         binding.loadFileBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String a = "aaaa";
-                infoViewModel.info.setValue(a);
+                openFilePicker();
             }
         });
 
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
         binding.recyclerView.setHasFixedSize(true);
 
-        ProductAdapter productAdapter = new ProductAdapter();
-        CompanyAdapter companyAdapter = new CompanyAdapter();
-        BoxAdapter boxAdapter = new BoxAdapter();
+
 
         switch (info) {
             case "상품 정보":
@@ -206,7 +257,7 @@ public class InfoActivity extends AppCompatActivity {
         if (requestCode == ADD_REQUEST && resultCode == RESULT_OK) {
             switch (data.getStringExtra("info")) {
                 case "상품 정보":
-                    int product_code = data.getIntExtra(InfoAddActivity.EXTRA_CODE, 0);
+                    String product_code = data.getStringExtra(InfoAddActivity.EXTRA_CODE);
                     String product_name = data.getStringExtra(InfoAddActivity.EXTRA_NAME);
                     int product_price = data.getIntExtra(InfoAddActivity.EXTRA_VALUE, 1000);
 
@@ -217,7 +268,7 @@ public class InfoActivity extends AppCompatActivity {
                     break;
 
                 case "업체 정보":
-                    int company_code = data.getIntExtra(InfoAddActivity.EXTRA_CODE, 0);
+                    String company_code = data.getStringExtra(InfoAddActivity.EXTRA_CODE);
                     String company_name = data.getStringExtra(InfoAddActivity.EXTRA_NAME);
 
 
@@ -249,7 +300,7 @@ public class InfoActivity extends AppCompatActivity {
 
             switch (data.getStringExtra("info")) {
                 case "상품 정보":
-                    int product_code = data.getIntExtra(InfoAddActivity.EXTRA_CODE, 0);
+                    String product_code = data.getStringExtra(InfoAddActivity.EXTRA_CODE);
                     String product_name = data.getStringExtra(InfoAddActivity.EXTRA_NAME);
                     int product_price = data.getIntExtra(InfoAddActivity.EXTRA_VALUE, 1000);
 
@@ -262,7 +313,7 @@ public class InfoActivity extends AppCompatActivity {
                     break;
 
                 case "업체 정보":
-                    int company_code = data.getIntExtra(InfoAddActivity.EXTRA_CODE, 0);
+                    String company_code = data.getStringExtra(InfoAddActivity.EXTRA_CODE);
                     String company_name = data.getStringExtra(InfoAddActivity.EXTRA_NAME);
 
                     Company company = new Company(company_code, company_name);
@@ -289,13 +340,13 @@ public class InfoActivity extends AppCompatActivity {
         } else if (requestCode == EDIT_REQUEST && resultCode == InfoAddActivity.DELETE_REQUEST) {
             switch (data.getStringExtra("info")) {
                 case "상품 정보":
-                    Product product = new Product(data.getIntExtra(InfoAddActivity.EXTRA_CODE, 0), data.getStringExtra(InfoAddActivity.EXTRA_NAME), data.getIntExtra(InfoAddActivity.EXTRA_VALUE, 1000));
+                    Product product = new Product(data.getStringExtra(InfoAddActivity.EXTRA_CODE), data.getStringExtra(InfoAddActivity.EXTRA_NAME), data.getIntExtra(InfoAddActivity.EXTRA_VALUE, 1000));
                     product.setId(data.getIntExtra(InfoAddActivity.EXTRA_ID, 0));
                     productViewModel.delete(product);
                     break;
 
                 case "업체 정보":
-                    Company company = new Company(data.getIntExtra(InfoAddActivity.EXTRA_CODE, 0), data.getStringExtra(InfoAddActivity.EXTRA_NAME));
+                    Company company = new Company(data.getStringExtra(InfoAddActivity.EXTRA_CODE), data.getStringExtra(InfoAddActivity.EXTRA_NAME));
                     company.setId(data.getIntExtra(InfoAddActivity.EXTRA_ID, 0));
                     companyViewModel.delete(company);
                     break;
@@ -312,7 +363,7 @@ public class InfoActivity extends AppCompatActivity {
             Toast.makeText(this, "Delete complete", Toast.LENGTH_SHORT).show();
 
         } else {
-            Toast.makeText(this, "Not saved", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "Not saved", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -446,5 +497,49 @@ public class InfoActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void openFilePicker(){
+        try {
+            Intent fileIntent = new Intent(Intent.ACTION_GET_CONTENT);
+            fileIntent.addCategory(Intent.CATEGORY_OPENABLE);
 
+            fileIntent.setType("application/*");
+
+            filePicker.launch(fileIntent);
+        }catch (Exception e){
+            Log.d("TAG", e.getMessage());
+        }
+    }
+
+    public void readExcelFile(Context context, Uri uri){
+        try {
+            InputStream inStream;
+            Workbook wb = null;
+
+            try {
+                inStream = context.getContentResolver().openInputStream(uri);
+
+                wb = new XSSFWorkbook(inStream);
+
+                inStream.close();
+            } catch (IOException e) {
+
+                e.printStackTrace();
+            }
+
+            Sheet sheet = wb.getSheetAt(0);
+            switch (info){
+                case "상품 정보":
+                    ExcelHelper.importExcelProduct(productViewModel, sheet);
+                    break;
+                case "업체 정보":
+                    ExcelHelper.importExcelCompany(companyViewModel, sheet);
+                    break;
+                case "박스 정보":
+                    break;
+            }
+
+        } catch (Exception ex) {
+            Log.d("TAG",ex.toString());
+        }
+    }
 }
