@@ -3,6 +3,7 @@ package com.example.wdgfarm_android.fragment;
 import static android.app.Activity.RESULT_OK;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,12 +23,18 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.wdgfarm_android.R;
 import com.example.wdgfarm_android.activity.InfoAddActivity;
 import com.example.wdgfarm_android.activity.SelectActivity;
+import com.example.wdgfarm_android.api.ApiListener;
+import com.example.wdgfarm_android.api.PurchaseApi;
 import com.example.wdgfarm_android.databinding.FragmentWorkBinding;
 import com.example.wdgfarm_android.model.Weighing;
 import com.example.wdgfarm_android.utils.DatetimePickerFragment;
+import com.example.wdgfarm_android.viewmodel.ApiViewModel;
 import com.example.wdgfarm_android.viewmodel.WeighingViewModel;
 import com.example.wdgfarm_android.viewmodel.WeighingWorkViewModel;
 
+import org.json.JSONException;
+
+import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -47,6 +54,7 @@ public class WorkFragment extends Fragment {
     private SimpleDateFormat format;
     public static Weighing weighing;
     public static WeighingWorkViewModel weighingWorkViewModel;
+    public static ApiViewModel apiViewModel;
     public static FragmentWorkBinding binding;
 
     public WorkFragment(){
@@ -65,6 +73,7 @@ public class WorkFragment extends Fragment {
 
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_work, container, false);
         View view = binding.getRoot();
+        apiViewModel = new ViewModelProvider(getActivity()).get(ApiViewModel.class);
         weighingViewModel = new ViewModelProvider(getActivity()).get(WeighingViewModel.class);
         weighingWorkViewModel = new ViewModelProvider(getActivity()).get(WeighingWorkViewModel.class);
         binding.workCompanyBtn.setOnClickListener(new View.OnClickListener() {
@@ -150,6 +159,20 @@ public class WorkFragment extends Fragment {
                     weighing.setRealWeight(Float.parseFloat(binding.realWeightValue.getText().toString().replace(" kg","")));
 
                     weighingWorkViewModel.weighing.setValue(weighing);
+                    SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
+
+                    new PurchaseApi(apiViewModel.zone.getValue(), apiViewModel.sessionID.getValue(), format.format(weighing.getDate()), weighing.getCompanyName(), weighing.getProductName(), weighing.getProductPrice(), new ApiListener() {
+                        @Override
+                        public void success(String response) throws JSONException {
+                            Log.d("TAG", "구매 입력 성공");
+
+                        }
+
+                        @Override
+                        public void fail() {
+                            Log.e("TAG", "구매 입력 실패");
+                        }
+                    }).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
                     weighingViewModel.insert(weighing);
 
@@ -174,7 +197,7 @@ public class WorkFragment extends Fragment {
                 //업체
                 case 100:
                     weighing.setCompanyID(data.getIntExtra(InfoAddActivity.EXTRA_ID, 0));
-                    weighing.setCompanyCode(data.getIntExtra(InfoAddActivity.EXTRA_CODE, 0));
+                    weighing.setCompanyCode(data.getStringExtra(InfoAddActivity.EXTRA_CODE));
                     weighing.setCompanyName(data.getStringExtra(InfoAddActivity.EXTRA_NAME));
 
                     binding.workCompanyBtn.setTextColor(getResources().getColor(R.color.colorBlack));
@@ -183,7 +206,7 @@ public class WorkFragment extends Fragment {
                 //상품
                 case 200:
                     weighing.setProductID(data.getIntExtra(InfoAddActivity.EXTRA_ID, 0));
-                    weighing.setProductCode(data.getIntExtra(InfoAddActivity.EXTRA_CODE, 0));
+                    weighing.setProductCode(data.getStringExtra(InfoAddActivity.EXTRA_CODE));
                     weighing.setProductName(data.getStringExtra(InfoAddActivity.EXTRA_NAME));
                     weighing.setProductPrice(data.getIntExtra(InfoAddActivity.EXTRA_VALUE, 1000));
 

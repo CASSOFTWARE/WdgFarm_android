@@ -19,11 +19,11 @@ public class Weighing {
     private int id;
 
     private int companyID;
-    private int companyCode;
+    private String companyCode;
     private String companyName;
 
     private int productID;
-    private int productCode;
+    private String productCode;
     private String productName;
     private int productPrice;
 
@@ -60,11 +60,11 @@ public class Weighing {
         this.companyID = companyID;
     }
 
-    public int getCompanyCode() {
+    public String getCompanyCode() {
         return companyCode;
     }
 
-    public void setCompanyCode(int companyCode) {
+    public void setCompanyCode(String companyCode) {
         this.companyCode = companyCode;
     }
 
@@ -84,11 +84,11 @@ public class Weighing {
         this.productID = productID;
     }
 
-    public int getProductCode() {
+    public String getProductCode() {
         return productCode;
     }
 
-    public void setProductCode(int productCode) {
+    public void setProductCode(String productCode) {
         this.productCode = productCode;
     }
 

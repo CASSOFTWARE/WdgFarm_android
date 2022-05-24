@@ -4,9 +4,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.app.Activity;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -15,11 +18,19 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import com.example.wdgfarm_android.R;
+import com.example.wdgfarm_android.api.ApiListener;
+import com.example.wdgfarm_android.api.LoginApi;
+import com.example.wdgfarm_android.api.ZoneApi;
 import com.example.wdgfarm_android.fragment.DataFragment;
 import com.example.wdgfarm_android.fragment.HistoryFragment;
 import com.example.wdgfarm_android.fragment.SettingFragment;
 import com.example.wdgfarm_android.fragment.WorkFragment;
+import com.example.wdgfarm_android.viewmodel.ApiViewModel;
+import com.example.wdgfarm_android.viewmodel.ProductViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -39,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Fragment mActiveFragment = mWorkFragment;
 
+    private ApiViewModel apiViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,6 +105,41 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
+
+        apiViewModel = new ViewModelProvider(this).get(ApiViewModel.class);
+
+        new ZoneApi(new ApiListener() {
+            @Override
+            public void success(String response) throws JSONException {
+                JSONObject zoneResult = new JSONObject(response);
+                String zone = zoneResult.getString("ZONE");
+
+                new LoginApi(zone, new ApiListener(){
+
+                    @Override
+                    public void success(String response) throws JSONException {
+                        JSONObject datasResult = new JSONObject(response);
+                        String datas = datasResult.getString("Datas");
+                        JSONObject sessionResult = new JSONObject(datas);
+                        String session = sessionResult.getString("SESSION_ID");
+
+                        apiViewModel.zone.setValue(zone);
+                        apiViewModel.sessionID.setValue(session);
+                        Log.d("TAG", "로그인 성공");
+                    }
+
+                    @Override
+                    public void fail() {
+                        Log.e("TAG", "로그인 실패");
+                    }
+                }).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            }
+
+            @Override
+            public void fail() {
+                Log.e("TAG", "Zone 실패");
+            }
+        }).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     //뒤로가기 버튼 두번 누르면 앱 종료
@@ -145,4 +192,8 @@ public class MainActivity extends AppCompatActivity {
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+    }
 }
