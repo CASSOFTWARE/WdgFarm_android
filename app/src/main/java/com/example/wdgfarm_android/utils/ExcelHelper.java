@@ -24,14 +24,17 @@ public class ExcelHelper {
         Row row = rit.next();
         row = rit.next();
         Company company;
+
         for ( ; rit.hasNext(); ) {
             row = rit.next();
-            row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
-            row.getCell(1, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
-            row.getCell(2, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
-            row.getCell(3, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
-            company = new Company(row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue(), row.getCell(1, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue(), row.getCell(2, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue(), row.getCell(3, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue());
-            companyViewModel.insert(company);
+            if(rit.hasNext()) {
+                row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
+                row.getCell(1, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
+                row.getCell(2, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
+                row.getCell(3, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
+                company = new Company(row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue(), row.getCell(1, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue(), row.getCell(2, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue(), row.getCell(3, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue());
+                companyViewModel.insert(company);
+            }
         }
     }
 
@@ -43,15 +46,17 @@ public class ExcelHelper {
         Product product;
         for ( ; rit.hasNext(); ) {
             row = rit.next();
-            row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
-            row.getCell(1, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
-            row.getCell(2, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
+            if(rit.hasNext()) {
+                row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
+                row.getCell(1, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
+                row.getCell(2, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
 
-            //TODO : Product 모델하고 Excel 파일 모델하고 데이터 일치화
-            //TODO : Excel 파일에는 가격이 없음
+                //TODO : Product 모델하고 Excel 파일 모델하고 데이터 일치화
+                //TODO : Excel 파일에는 가격이 없음
 
-            product = new Product(row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue(), row.getCell(1, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue(), Integer.parseInt(row.getCell(2, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue()));
-            productViewModel.insert(product);
+                product = new Product(row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue(), row.getCell(1, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue(), row.getCell(2, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue());
+                productViewModel.insert(product);
+            }
         }
     }
 }

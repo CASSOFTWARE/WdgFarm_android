@@ -24,14 +24,17 @@ public class ProductApi extends AsyncTask<Void, Void, String> {
     private String session;
     private String productCode;
     private String productName;
+    private int productPrice;
     StringBuilder result;
 
-    public ProductApi(String zone, String session, String productCode, String productName, ApiListener listener) {
+    public ProductApi(String zone, String session, String productCode, String productName, int productPrice, ApiListener listener) {
         this.zone = zone;
         this.session = session;
         this.productCode = productCode;
         this.productName = productName;
+        this.productPrice = productPrice;
         this.listener = listener;
+
     }
 
     @Override
@@ -51,7 +54,7 @@ public class ProductApi extends AsyncTask<Void, Void, String> {
             jsonData.put("PROD_CD", productCode);
             jsonData.put("PROD_DES", productName);
             jsonData.put("PROD_TYPE", "1");
-
+            jsonData.put("IN_PRICE", productPrice);
 
             jsonList.put("Line", "0");
             jsonList.put("BulkDatas", jsonData);

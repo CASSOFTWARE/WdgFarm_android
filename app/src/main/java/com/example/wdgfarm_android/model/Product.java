@@ -10,9 +10,9 @@ public class Product {
     private int id;
     private String code;
     private String name;
-    private int price;
+    private String price;
 
-    public Product (String code, String name, int price){
+    public Product (String code, String name, String price){
         this.code = code;
         this.name = name;
         this.price = price;
@@ -42,11 +42,11 @@ public class Product {
         this.name = name;
     }
 
-    public int getPrice() {
+    public String getPrice() {
         return price;
     }
 
-    public void setPrice(int price) {
+    public void setPrice(String price) {
         this.price = price;
     }
 }

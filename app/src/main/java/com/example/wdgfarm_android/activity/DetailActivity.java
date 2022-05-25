@@ -35,6 +35,7 @@ public class DetailActivity extends AppCompatActivity {
     public static final String EXTRA_PALETTE_WEIGHT = "com.example.wdgfarm_android.EXTRA_PALETTE_WEIGHT";
     public static final String EXTRA_DEDUCTIBLE_WEIGHT = "com.example.wdgfarm_android.EXTRA_DEDUCTIBLE_WEIGHT";
     public static final String EXTRA_REAL_WEIGHT = "com.example.wdgfarm_android.EXTRA_REAL_WEIGHT";
+    public static final String EXTRA_ERP_DATE = "com.example.wdgfarm_android.EXTRA_ERP_DATE";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,16 +59,17 @@ public class DetailActivity extends AppCompatActivity {
         binding.detailPriceText.setText(String.valueOf(intent.getExtras().getInt(EXTRA_PRODUCT_PRPICE, 1000)));
         binding.detailDateText.setText(intent.getExtras().getString(EXTRA_DATE));
 
-        binding.totalWeightValue.setText(String.valueOf(intent.getExtras().getFloat(EXTRA_TOTAL_WEIGHT, 0))+" kg");
+        binding.totalWeightValue.setText(String.valueOf(intent.getExtras().getFloat(EXTRA_TOTAL_WEIGHT, 0)));
 
-        binding.boxWeightValue.setText(String.valueOf(intent.getExtras().getFloat(EXTRA_BOX_WEIGHT, 0))+" kg");
+        binding.boxWeightValue.setText(String.valueOf(intent.getExtras().getFloat(EXTRA_BOX_WEIGHT, 0)));
         binding.boxAccountValue.setText(String.valueOf(intent.getExtras().getInt(EXTRA_BOX_ACCOUNT, 0)));
         binding.boxSize.setText(intent.getExtras().getString(EXTRA_BOX_NAME));
 
-        binding.paletteWeightValue.setText(String.valueOf(intent.getExtras().getFloat(EXTRA_PALETTE_WEIGHT, 0))+" kg");
-        binding.deductibleWeightValue.setText(String.valueOf(intent.getExtras().getFloat(EXTRA_DEDUCTIBLE_WEIGHT, 0))+" kg");
+        binding.paletteWeightValue.setText(String.valueOf(intent.getExtras().getFloat(EXTRA_PALETTE_WEIGHT, 0)));
+        binding.deductibleWeightValue.setText(String.valueOf(intent.getExtras().getFloat(EXTRA_DEDUCTIBLE_WEIGHT, 0)));
 
         binding.realWeightValue.setText(String.valueOf(intent.getExtras().getFloat(EXTRA_REAL_WEIGHT, 0))+" kg");
+        binding.erpTimeValue.setText(intent.getExtras().getString(EXTRA_ERP_DATE));
 
     }
 }

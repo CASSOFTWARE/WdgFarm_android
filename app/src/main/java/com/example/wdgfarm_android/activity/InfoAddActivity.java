@@ -56,6 +56,9 @@ public class InfoAddActivity extends AppCompatActivity {
                 binding.infoAddCodeText.setText(R.string.product_code);
                 binding.infoAddNameText.setText(R.string.product_name);
                 binding.infoAddValueText.setText(R.string.product_price);
+                binding.infoAddTelText.setVisibility(View.GONE);
+                binding.infoAddTelValue.setVisibility(View.GONE);
+                binding.infoAddValue.setInputType(InputType.TYPE_CLASS_NUMBER);
                 break;
 
             case "거래처 정보":
@@ -72,6 +75,9 @@ public class InfoAddActivity extends AppCompatActivity {
                 binding.infoAddCodeValue.setVisibility(View.GONE);
                 binding.infoAddNameText.setText(R.string.box_name);
                 binding.infoAddValueText.setText(R.string.box_weight);
+                binding.infoAddTelText.setVisibility(View.GONE);
+                binding.infoAddTelValue.setVisibility(View.GONE);
+                binding.infoAddValue.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
                 break;
 
             default:
@@ -81,6 +87,8 @@ public class InfoAddActivity extends AppCompatActivity {
         if(intent.hasExtra(EXTRA_ID)){
             binding.infoAddCodeValue.setText(String.valueOf(intent.getStringExtra(EXTRA_CODE)));
             binding.infoAddNameValue.setText(intent.getStringExtra(EXTRA_NAME));
+            binding.infoAddValue.setText(intent.getStringExtra(EXTRA_VALUE));
+            binding.infoAddTelValue.setText(intent.getStringExtra(EXTRA_TEL));
             //binding.infoAddValue.setText(String.valueOf(intent.getIntExtra(EXTRA_VALUE, 1000)));
         }
         else{
@@ -98,7 +106,7 @@ public class InfoAddActivity extends AppCompatActivity {
                             data.putExtra("info", info);
                             data.putExtra(EXTRA_CODE, binding.infoAddCodeValue.getText().toString());
                             data.putExtra(EXTRA_NAME, binding.infoAddNameValue.getText().toString());
-                            data.putExtra(EXTRA_VALUE, parseInt(binding.infoAddValue.getText().toString()));
+                            data.putExtra(EXTRA_VALUE, binding.infoAddValue.getText().toString());
 
                             int id = getIntent().getIntExtra(EXTRA_ID, -1);
                             if(id != -1){
@@ -158,12 +166,15 @@ public class InfoAddActivity extends AppCompatActivity {
                     case "상품 정보":
                         data.putExtra(EXTRA_CODE, intent.getIntExtra(EXTRA_CODE, 0));
                         data.putExtra(EXTRA_NAME, intent.getStringExtra(EXTRA_NAME));
-                        data.putExtra(EXTRA_VALUE, intent.getIntExtra(EXTRA_VALUE, 1000));
+                        data.putExtra(EXTRA_VALUE, intent.getStringExtra(EXTRA_VALUE));
                         break;
 
                     case "거래처 정보":
                         data.putExtra(EXTRA_CODE, intent.getIntExtra(EXTRA_CODE, 0));
                         data.putExtra(EXTRA_NAME, intent.getStringExtra(EXTRA_NAME));
+                        data.putExtra(EXTRA_VALUE, intent.getStringExtra(EXTRA_VALUE));
+                        data.putExtra(EXTRA_TEL, intent.getStringExtra(EXTRA_TEL));
+
                         break;
 
                     case "박스 정보":

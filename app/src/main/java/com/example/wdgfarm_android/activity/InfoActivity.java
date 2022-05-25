@@ -34,13 +34,13 @@ import com.example.wdgfarm_android.adapter.CompanyAdapter;
 import com.example.wdgfarm_android.adapter.ProductAdapter;
 import com.example.wdgfarm_android.api.ApiListener;
 import com.example.wdgfarm_android.api.CompanyApi;
+import com.example.wdgfarm_android.api.ProductApi;
 import com.example.wdgfarm_android.databinding.ActivityInfoBinding;
 
 import com.example.wdgfarm_android.model.Box;
 import com.example.wdgfarm_android.model.Company;
 import com.example.wdgfarm_android.model.Product;
 import com.example.wdgfarm_android.utils.ExcelHelper;
-import com.example.wdgfarm_android.viewmodel.ApiViewModel;
 import com.example.wdgfarm_android.viewmodel.BoxViewModel;
 import com.example.wdgfarm_android.viewmodel.CompanyViewModel;
 import com.example.wdgfarm_android.viewmodel.InfoViewModel;
@@ -70,7 +70,6 @@ public class InfoActivity extends AppCompatActivity {
     private ProductViewModel productViewModel;
     private CompanyViewModel companyViewModel;
     private BoxViewModel boxViewModel;
-    private ApiViewModel apiViewModel;
 
     private String info, zone, session;
     ActivityResultLauncher<Intent> filePicker;
@@ -118,9 +117,13 @@ public class InfoActivity extends AppCompatActivity {
             @Override
             public void onChanged(String s) {
                 binding.infoTitle.setText(infoViewModel.info.getValue() + "");
+                if(s.contains("박스 정보")){
+                    binding.loadFileBtn.setEnabled(false);
+                }
             }
         });
 
+        //파일 가져오기
         filePicker = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
@@ -129,13 +132,7 @@ public class InfoActivity extends AppCompatActivity {
                         Uri uri = intentExcel.getData();
 
                         readExcelFile(InfoActivity.this, uri);
-//                        companyViewModel.getAllCompanys().observe(this, new Observer<List<Company>>() {
-//                            @Override
-//                            public void onChanged(List<Company> company) {
-//                                companyAdapter.setCompanys(company);
-//                            }
-//                        });
-                        //TODO: room 데이터 초기화 후 읽은 데이터 insert
+
                     }
                 });
 
@@ -231,6 +228,8 @@ public class InfoActivity extends AppCompatActivity {
                 intent.putExtra(InfoAddActivity.EXTRA_ID, company.getId());
                 intent.putExtra(InfoAddActivity.EXTRA_CODE, company.getCode());
                 intent.putExtra(InfoAddActivity.EXTRA_NAME, company.getName());
+                intent.putExtra(InfoAddActivity.EXTRA_VALUE, company.getBoss());
+                intent.putExtra(InfoAddActivity.EXTRA_TEL, company.getTel());
                 intent.putExtra("info", info);
 
                 startActivityForResult(intent, EDIT_REQUEST);
@@ -268,12 +267,26 @@ public class InfoActivity extends AppCompatActivity {
                 case "상품 정보":
                     String product_code = data.getStringExtra(InfoAddActivity.EXTRA_CODE);
                     String product_name = data.getStringExtra(InfoAddActivity.EXTRA_NAME);
-                    int product_price = data.getIntExtra(InfoAddActivity.EXTRA_VALUE, 1000);
+                    String product_price = data.getStringExtra(InfoAddActivity.EXTRA_VALUE);
 
                     Product product = new Product(product_code, product_name, product_price);
+                    new ProductApi(zone, session, product_code, product_name, Integer.parseInt(product_price), new ApiListener() {
+                        @Override
+                        public void success(String response) throws JSONException {
+                            productViewModel.insert(product);
+                            Toast.makeText(getApplicationContext(), "Product saved", Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void fail() {
+                            Toast.makeText(getApplicationContext(), "Product saved fail", Toast.LENGTH_SHORT).show();
+
+                        }
+                    }).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
                     productViewModel.insert(product);
 
-                    Toast.makeText(this, "Product saved", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(this, "Product saved", Toast.LENGTH_SHORT).show();
                     break;
 
                 case "거래처 정보":
@@ -325,7 +338,7 @@ public class InfoActivity extends AppCompatActivity {
                 case "상품 정보":
                     String product_code = data.getStringExtra(InfoAddActivity.EXTRA_CODE);
                     String product_name = data.getStringExtra(InfoAddActivity.EXTRA_NAME);
-                    int product_price = data.getIntExtra(InfoAddActivity.EXTRA_VALUE, 1000);
+                    String product_price = data.getStringExtra(InfoAddActivity.EXTRA_VALUE);
 
                     Product product = new Product(product_code, product_name, product_price);
                     product.setId(id);
@@ -366,7 +379,7 @@ public class InfoActivity extends AppCompatActivity {
         } else if (requestCode == EDIT_REQUEST && resultCode == InfoAddActivity.DELETE_REQUEST) {
             switch (data.getStringExtra("info")) {
                 case "상품 정보":
-                    Product product = new Product(data.getStringExtra(InfoAddActivity.EXTRA_CODE), data.getStringExtra(InfoAddActivity.EXTRA_NAME), data.getIntExtra(InfoAddActivity.EXTRA_VALUE, 1000));
+                    Product product = new Product(data.getStringExtra(InfoAddActivity.EXTRA_CODE), data.getStringExtra(InfoAddActivity.EXTRA_NAME), data.getStringExtra(InfoAddActivity.EXTRA_VALUE));
                     product.setId(data.getIntExtra(InfoAddActivity.EXTRA_ID, 0));
                     productViewModel.delete(product);
                     break;

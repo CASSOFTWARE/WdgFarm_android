@@ -43,12 +43,12 @@ import java.util.Date;
 public class WorkFragment extends Fragment {
     public static final int INFO_COMPANY = 100;
     public static final int INFO_PRODUCT = 200;
+    public static final int INFO_BOX = 300;
 
     private static final int REQUEST_DATE = 1;
     private static final String INIT_COMPANY = "업체를 선택하세요.";
     private static final String INIT_PRODUCT = "상품을 선택하세요.";
     private static final String INIT_DATE = "입고일";
-    private static final String DIALOG_DATE = "DataTimePicker Dialog";
 
     private WeighingViewModel weighingViewModel;
     private SimpleDateFormat format;
@@ -103,6 +103,8 @@ public class WorkFragment extends Fragment {
                 binding.workProductBtn.setText(weighing.getProductName());
                 binding.workPriceEdit.setText(String.valueOf(weighing.getProductPrice()));
                 binding.workDateBtn.setText(format.format(weighing.getDate()));
+                binding.boxSize.setText(weighing.getBoxName());
+                binding.boxWeightValue.setText(String.valueOf(weighing.getBoxWeight()));
             }
         });
 
@@ -114,6 +116,15 @@ public class WorkFragment extends Fragment {
                 dialog.setTargetFragment(WorkFragment.this, REQUEST_DATE);
 
                 dialog.show(manager, "DataTimePicker Dialog");
+            }
+        });
+
+        binding.boxWeightValue.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity().getApplication(), SelectActivity.class);
+                intent.putExtra(SelectActivity.EXTRA_INFO, INFO_BOX);
+                startActivityForResult(intent, INFO_BOX);
             }
         });
 
@@ -151,11 +162,11 @@ public class WorkFragment extends Fragment {
                 }
 
                 if (!binding.workProductBtn.getText().toString().contains(INIT_PRODUCT) && !binding.workSaveBtn.getText().toString().contains(INIT_COMPANY) && !binding.workDateBtn.getText().toString().contains(INIT_DATE)) {
-                    weighing.setTotalWeight(Float.parseFloat(binding.totalWeightValue.getText().toString().replace(" kg","")));
-                    weighing.setBoxWeight(Float.parseFloat(binding.boxWeightValue.getText().toString().replace(" kg","")));
+                    weighing.setTotalWeight(Float.parseFloat(binding.totalWeightValue.getText().toString()));
+                    weighing.setBoxWeight(Float.parseFloat(binding.boxWeightValue.getText().toString()));
                     weighing.setBoxAccount(Integer.parseInt(binding.boxAccountValue.getText().toString()));
-                    weighing.setPaletteWeight(Float.parseFloat(binding.paletteWeightValue.getText().toString().replace(" kg","")));
-                    weighing.setDeductibleWeight(Float.parseFloat(binding.deductibleWeightValue.getText().toString().replace(" kg","")));
+                    weighing.setPaletteWeight(Float.parseFloat(binding.paletteWeightValue.getText().toString()));
+                    weighing.setDeductibleWeight(Float.parseFloat(binding.deductibleWeightValue.getText().toString()));
                     weighing.setRealWeight(Float.parseFloat(binding.realWeightValue.getText().toString().replace(" kg","")));
 
                     weighingWorkViewModel.weighing.setValue(weighing);
@@ -165,7 +176,10 @@ public class WorkFragment extends Fragment {
                         @Override
                         public void success(String response) throws JSONException {
                             Log.d("TAG", "구매 입력 성공");
-
+                            long now = System.currentTimeMillis();
+                            Date date = new Date(now);
+                            SimpleDateFormat erpFormat = new SimpleDateFormat("yyyy/MM/dd a hh:mm:ss");
+                            weighing.setErpDate(erpFormat.format(date));
                             weighingViewModel.insert(weighing);
                             Toast.makeText(getContext(), "저장되었습니다.", Toast.LENGTH_SHORT).show();
                         }
@@ -179,10 +193,10 @@ public class WorkFragment extends Fragment {
                     }).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
 
-                    Toast.makeText(getContext(), "저장되었습니다.", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getContext(), "저장되었습니다.", Toast.LENGTH_SHORT).show();
                 }
                 else{
-                    Toast.makeText(getContext(), "빈칸빈칸", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "빈칸이 있습니다", Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -218,6 +232,11 @@ public class WorkFragment extends Fragment {
 
                     binding.workProductBtn.setTextColor(getResources().getColor(R.color.colorBlack));
                     break;
+
+                case 300:
+                    weighing.setBoxID(data.getIntExtra(InfoAddActivity.EXTRA_ID,0));
+                    weighing.setBoxName(data.getStringExtra(InfoAddActivity.EXTRA_NAME));
+                    weighing.setBoxWeight(data.getFloatExtra(InfoAddActivity.EXTRA_VALUE, 0));
 
                 default:
                     break;

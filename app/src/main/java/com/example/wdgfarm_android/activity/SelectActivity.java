@@ -20,13 +20,16 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 
 import com.example.wdgfarm_android.R;
+import com.example.wdgfarm_android.adapter.BoxSelectAdapter;
 import com.example.wdgfarm_android.adapter.CompanyAdapter;
 import com.example.wdgfarm_android.adapter.CompanySelectAdapter;
 import com.example.wdgfarm_android.adapter.ProductAdapter;
 import com.example.wdgfarm_android.adapter.ProductSelectAdapter;
 import com.example.wdgfarm_android.databinding.ActivitySelectBinding;
+import com.example.wdgfarm_android.model.Box;
 import com.example.wdgfarm_android.model.Company;
 import com.example.wdgfarm_android.model.Product;
+import com.example.wdgfarm_android.viewmodel.BoxViewModel;
 import com.example.wdgfarm_android.viewmodel.CompanyViewModel;
 import com.example.wdgfarm_android.viewmodel.ProductViewModel;
 
@@ -37,8 +40,10 @@ public class SelectActivity extends AppCompatActivity {
 
     private ProductViewModel productViewModel;
     private CompanyViewModel companyViewModel;
+    private BoxViewModel boxViewModel;
     private ProductSelectAdapter productSelectAdapter;
     private CompanySelectAdapter companySelectAdapter;
+    private BoxSelectAdapter boxSelectAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +61,7 @@ public class SelectActivity extends AppCompatActivity {
 
         companySelectAdapter = new CompanySelectAdapter();
         productSelectAdapter = new ProductSelectAdapter();
+        boxSelectAdapter = new BoxSelectAdapter();
 
         binding.selectBackBtn.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -84,6 +90,15 @@ public class SelectActivity extends AppCompatActivity {
             case 200:
                 binding.selectTitle.setText(R.string.product_select);
                 binding.recyclerView.setAdapter(productSelectAdapter);
+                break;
+
+            case 300:
+                binding.selectBtn.setVisibility(View.GONE);
+                binding.selectTitle.setText(R.string.box_select);
+                binding.recyclerView.setAdapter(boxSelectAdapter);
+                break;
+
+            default:
                 break;
         }
 
@@ -130,6 +145,26 @@ public class SelectActivity extends AppCompatActivity {
             }
         });
 
+        boxViewModel = new ViewModelProvider(this).get(BoxViewModel.class);
+        boxViewModel.getAllBoxs().observe(this, new Observer<List<Box>>() {
+            @Override
+            public void onChanged(List<Box> boxes) {
+                boxSelectAdapter.setBoxs(boxes);
+            }
+        });
+
+        boxSelectAdapter.setOnItemClickListener(new BoxSelectAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(Box box) {
+                Intent data = new Intent();
+                data.putExtra(InfoAddActivity.EXTRA_ID, box.getId());
+                data.putExtra(InfoAddActivity.EXTRA_NAME, box.getName());
+                data.putExtra(InfoAddActivity.EXTRA_VALUE, box.getWeight());
+                data.putExtra(EXTRA_INFO, info);
+                setResult(RESULT_OK, data);
+                finish();
+            }
+        });
 
         EditText editText = (EditText)findViewById(R.id.select_edit) ;
 

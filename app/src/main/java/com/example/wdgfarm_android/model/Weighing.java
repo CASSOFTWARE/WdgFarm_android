@@ -41,6 +41,8 @@ public class Weighing {
     private float deductibleWeight;
     private float realWeight;
 
+    private String erpDate;
+
     public Weighing() {
     }
 
@@ -178,5 +180,13 @@ public class Weighing {
 
     public void setRealWeight(float realWeight) {
         this.realWeight = realWeight;
+    }
+
+    public String getErpDate() {
+        return erpDate;
+    }
+
+    public void setErpDate(String erpDate) {
+        this.erpDate = erpDate;
     }
 }
