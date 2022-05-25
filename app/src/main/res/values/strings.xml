@@ -1,8 +1,9 @@
 <resources>
-    <string name="app_name">WdgFarm_Android</string>
+    <string name="app_name">WRMS(우듬지입고관리시스템)</string>
     <!-- TODO: Remove or change this placeholder text -->
 
     <!--공통-->
+    <string name="app">우듬지 입고 관리 시스템</string>
     <string name="save">저장</string>
     <string name="delete">삭제</string>
     <string name="add">추가</string>
@@ -14,7 +15,9 @@
     <string name="measurement_work">계량 작업</string>
     <string name="scale_a">A</string>
     <string name="scale_b">B</string>
-    <string name="company_name">업체명</string>
+    <string name="company_name">거래처명</string>
+    <string name="company_boss">대표자명</string>
+    <string name="company_tel">전화번호</string>
     <string name="product_name">상품명</string>
     <string name="product_price">단가</string>
     <string name="product_date">입고일</string>
@@ -28,7 +31,9 @@
     <string name="toggle_on">저울 연결 해제</string>
     <string name="toggle_off">저울 연결 시도</string>
     <string name="product_select">상품 정보 선택</string>
-    <string name="company_select">업체 정보 선택</string>
+    <string name="company_select">거래처 정보 선택</string>
+    <string name="direct_input">직접 입력</string>
+
 
 
     <!--계량 내역-->
@@ -36,6 +41,7 @@
     <string name="yesterday">어제</string>
     <string name="today">오늘</string>
     <string name="week">1주일</string>
+    <string name="search">검색</string>
     <string name="no_data_available">데이터가 없습니다.</string>
     <string name="measurement_detail">계량 상세 정보</string>
     <string name="erp_time">ERP 연동 시간</string>
@@ -44,12 +50,12 @@
     <!--기초 자료-->
     <string name="basic_data">기초 자료</string>
     <string name="product_info">상품 정보</string>
-    <string name="company_info">업체 정보</string>
+    <string name="company_info">거래처 정보</string>
     <string name="box_info">박스 정보</string>
     <string name="load_file">파일 가져오기</string>
     <string name="export_file">파일 내보내기</string>
     <string name="product_code">상품 코드</string>
-    <string name="company_code">업체 코드</string>
+    <string name="company_code">거래처 코드</string>
     <string name="box_name">박스명</string>
     <string name="toast_check_blank">입력되지 않은 정보가 있습니다.</string>
     <string name="toast_save">저장되었습니다.</string>

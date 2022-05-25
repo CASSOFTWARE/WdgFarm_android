@@ -28,8 +28,9 @@ public class ExcelHelper {
             row = rit.next();
             row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
             row.getCell(1, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
-
-            company = new Company(row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue(), row.getCell(1, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue());
+            row.getCell(2, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
+            row.getCell(3, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
+            company = new Company(row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue(), row.getCell(1, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue(), row.getCell(2, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue(), row.getCell(3, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue());
             companyViewModel.insert(company);
         }
     }

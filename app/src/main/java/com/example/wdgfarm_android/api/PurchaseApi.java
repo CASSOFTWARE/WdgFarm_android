@@ -55,7 +55,7 @@ public class PurchaseApi extends AsyncTask<Void, Void, String> {
             jsonData.put("UPLOAD_SER_NO", "");
             jsonData.put("IO_DATE", date);
             jsonData.put("CUST_DES", company);
-            jsonData.put("PROD_CD", product);
+            jsonData.put("PROD_DES", product);
             jsonData.put("QTY", 1);
             jsonData.put("SUPPLY_AMT", price);
 
@@ -103,7 +103,7 @@ public class PurchaseApi extends AsyncTask<Void, Void, String> {
         super.onPostExecute(response);
         Log.e(TAG, "Response : " + response);
 
-        if (response.contains("TRACE_ID")) {
+        if (response.contains("TRACE_ID") && response.contains("FailCnt\":0")) {
             try {
                 listener.success(result.toString());
             } catch (JSONException e) {

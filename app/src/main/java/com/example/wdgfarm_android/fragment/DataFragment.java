@@ -11,13 +11,17 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.wdgfarm_android.R;
 import com.example.wdgfarm_android.activity.InfoActivity;
 import com.example.wdgfarm_android.activity.MainActivity;
 import com.example.wdgfarm_android.databinding.FragmentDataBinding;
+import com.example.wdgfarm_android.viewmodel.ApiViewModel;
 
 public class DataFragment extends Fragment {
+
+    private ApiViewModel apiViewModel;
 
     public DataFragment(){
 
@@ -29,6 +33,7 @@ public class DataFragment extends Fragment {
         FragmentDataBinding binding = DataBindingUtil.inflate(inflater, R.layout.fragment_data, container, false);
         View view = binding.getRoot();
 
+        apiViewModel = new ViewModelProvider(getActivity()).get(ApiViewModel.class);
         binding.productInfoBtn.setOnClickListener(
                 new View.OnClickListener(){
                     @Override
@@ -62,6 +67,8 @@ public class DataFragment extends Fragment {
     public void startInfoActivity(String info) {
         Intent intent = new Intent(getActivity().getApplication(), InfoActivity.class);
         intent.putExtra("info", info);
+        intent.putExtra("zone", apiViewModel.zone.getValue());
+        intent.putExtra("session", apiViewModel.sessionID.getValue());
         startActivity(intent);
     }
 }

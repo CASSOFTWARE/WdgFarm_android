@@ -19,6 +19,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -31,12 +32,15 @@ import com.example.wdgfarm_android.R;
 import com.example.wdgfarm_android.adapter.BoxAdapter;
 import com.example.wdgfarm_android.adapter.CompanyAdapter;
 import com.example.wdgfarm_android.adapter.ProductAdapter;
+import com.example.wdgfarm_android.api.ApiListener;
+import com.example.wdgfarm_android.api.CompanyApi;
 import com.example.wdgfarm_android.databinding.ActivityInfoBinding;
 
 import com.example.wdgfarm_android.model.Box;
 import com.example.wdgfarm_android.model.Company;
 import com.example.wdgfarm_android.model.Product;
 import com.example.wdgfarm_android.utils.ExcelHelper;
+import com.example.wdgfarm_android.viewmodel.ApiViewModel;
 import com.example.wdgfarm_android.viewmodel.BoxViewModel;
 import com.example.wdgfarm_android.viewmodel.CompanyViewModel;
 import com.example.wdgfarm_android.viewmodel.InfoViewModel;
@@ -47,6 +51,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.json.JSONException;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -65,8 +70,9 @@ public class InfoActivity extends AppCompatActivity {
     private ProductViewModel productViewModel;
     private CompanyViewModel companyViewModel;
     private BoxViewModel boxViewModel;
+    private ApiViewModel apiViewModel;
 
-    private String info;
+    private String info, zone, session;
     ActivityResultLauncher<Intent> filePicker;
 
     private static String extensionXLXS = "XLXS";
@@ -99,9 +105,12 @@ public class InfoActivity extends AppCompatActivity {
         ActivityInfoBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_info);
 
         Intent intent = getIntent();
+
         InfoViewModel infoViewModel = new ViewModelProvider(this).get(InfoViewModel.class);
 
         info = intent.getExtras().getString("info");
+        zone = intent.getExtras().getString("zone");
+        session = intent.getExtras().getString("session");
 
         infoViewModel.info.setValue(info);
 
@@ -173,7 +182,7 @@ public class InfoActivity extends AppCompatActivity {
                 binding.recyclerView.setAdapter(productAdapter);
                 break;
 
-            case "업체 정보":
+            case "거래처 정보":
                 binding.recyclerView.setAdapter(companyAdapter);
                 break;
 
@@ -267,15 +276,29 @@ public class InfoActivity extends AppCompatActivity {
                     Toast.makeText(this, "Product saved", Toast.LENGTH_SHORT).show();
                     break;
 
-                case "업체 정보":
+                case "거래처 정보":
                     String company_code = data.getStringExtra(InfoAddActivity.EXTRA_CODE);
                     String company_name = data.getStringExtra(InfoAddActivity.EXTRA_NAME);
+                    String company_boss = data.getStringExtra(InfoAddActivity.EXTRA_VALUE);
+                    String company_tel = data.getStringExtra(InfoAddActivity.EXTRA_TEL);
+
+                    Company company = new Company(company_code, company_name, company_boss, company_tel);
+                    new CompanyApi(zone, session, company_code, company_name, company_boss, company_tel, new ApiListener() {
+                        @Override
+                        public void success(String response) throws JSONException {
+                            companyViewModel.insert(company);
+                            Toast.makeText(getApplicationContext(), "Company saved", Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void fail() {
+                            Toast.makeText(getApplicationContext(), "Company saved fail", Toast.LENGTH_SHORT).show();
+
+                        }
+                    }).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
 
-                    Company company = new Company(company_code, company_name);
-                    companyViewModel.insert(company);
-
-                    Toast.makeText(this, "Company saved", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(this, "Company saved", Toast.LENGTH_SHORT).show();
                     break;
 
                 case "박스 정보":
@@ -312,12 +335,15 @@ public class InfoActivity extends AppCompatActivity {
                     Toast.makeText(this, "Product updated", Toast.LENGTH_SHORT).show();
                     break;
 
-                case "업체 정보":
+                case "거래처 정보":
                     String company_code = data.getStringExtra(InfoAddActivity.EXTRA_CODE);
                     String company_name = data.getStringExtra(InfoAddActivity.EXTRA_NAME);
+                    String company_boss = data.getStringExtra(InfoAddActivity.EXTRA_VALUE);
+                    String company_tel = data.getStringExtra(InfoAddActivity.EXTRA_TEL);
 
-                    Company company = new Company(company_code, company_name);
+                    Company company = new Company(company_code, company_name, company_boss, company_tel);
                     company.setId(id);
+
 
                     companyViewModel.update(company);
 
@@ -345,8 +371,8 @@ public class InfoActivity extends AppCompatActivity {
                     productViewModel.delete(product);
                     break;
 
-                case "업체 정보":
-                    Company company = new Company(data.getStringExtra(InfoAddActivity.EXTRA_CODE), data.getStringExtra(InfoAddActivity.EXTRA_NAME));
+                case "거래처 정보":
+                    Company company = new Company(data.getStringExtra(InfoAddActivity.EXTRA_CODE), data.getStringExtra(InfoAddActivity.EXTRA_NAME), data.getStringExtra(InfoAddActivity.EXTRA_VALUE), data.getStringExtra(InfoAddActivity.EXTRA_TEL));
                     company.setId(data.getIntExtra(InfoAddActivity.EXTRA_ID, 0));
                     companyViewModel.delete(company);
                     break;
@@ -394,7 +420,7 @@ public class InfoActivity extends AppCompatActivity {
                             product.getPrice());
                 }
                 break;
-            case "업체 정보":
+            case "거래처 정보":
                 List<Company> companyList = companyViewModel.getAllCompanys().getValue();
                 columnString = String.format("\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"\n",
                         "거래처코드",
@@ -442,7 +468,7 @@ public class InfoActivity extends AppCompatActivity {
             case "상품 정보":
                 fileName = "ProductData.csv";
                 break;
-            case "업체 정보":
+            case "거래처 정보":
                 fileName = "CompanyData.csv";
                 break;
             case "박스 정보":
@@ -531,7 +557,7 @@ public class InfoActivity extends AppCompatActivity {
                 case "상품 정보":
                     ExcelHelper.importExcelProduct(productViewModel, sheet);
                     break;
-                case "업체 정보":
+                case "거래처 정보":
                     ExcelHelper.importExcelCompany(companyViewModel, sheet);
                     break;
                 case "박스 정보":

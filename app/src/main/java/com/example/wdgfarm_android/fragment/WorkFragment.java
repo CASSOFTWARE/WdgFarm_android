@@ -166,15 +166,18 @@ public class WorkFragment extends Fragment {
                         public void success(String response) throws JSONException {
                             Log.d("TAG", "구매 입력 성공");
 
+                            weighingViewModel.insert(weighing);
+                            Toast.makeText(getContext(), "저장되었습니다.", Toast.LENGTH_SHORT).show();
                         }
 
                         @Override
                         public void fail() {
                             Log.e("TAG", "구매 입력 실패");
+                            Toast.makeText(getContext(), "저장 실패", Toast.LENGTH_SHORT).show();
+
                         }
                     }).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
-                    weighingViewModel.insert(weighing);
 
                     Toast.makeText(getContext(), "저장되었습니다.", Toast.LENGTH_SHORT).show();
                 }
@@ -196,10 +199,13 @@ public class WorkFragment extends Fragment {
             switch (info){
                 //업체
                 case 100:
-                    weighing.setCompanyID(data.getIntExtra(InfoAddActivity.EXTRA_ID, 0));
-                    weighing.setCompanyCode(data.getStringExtra(InfoAddActivity.EXTRA_CODE));
-                    weighing.setCompanyName(data.getStringExtra(InfoAddActivity.EXTRA_NAME));
-
+                    if(data.hasExtra(InfoAddActivity.EXTRA_ID)) {
+                        weighing.setCompanyID(data.getIntExtra(InfoAddActivity.EXTRA_ID, 0));
+                        weighing.setCompanyCode(data.getStringExtra(InfoAddActivity.EXTRA_CODE));
+                        weighing.setCompanyName(data.getStringExtra(InfoAddActivity.EXTRA_NAME));
+                    }else{
+                        weighing.setCompanyName(data.getStringExtra(InfoAddActivity.EXTRA_NAME));
+                    }
                     binding.workCompanyBtn.setTextColor(getResources().getColor(R.color.colorBlack));
                     break;
 

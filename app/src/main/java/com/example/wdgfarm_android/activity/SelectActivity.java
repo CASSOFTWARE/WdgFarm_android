@@ -64,6 +64,17 @@ public class SelectActivity extends AppCompatActivity {
             }
         });
 
+        binding.selectBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent data = new Intent();
+                data.putExtra(InfoAddActivity.EXTRA_NAME, binding.selectEdit.getText().toString());
+                data.putExtra(EXTRA_INFO, info);
+                setResult(RESULT_OK, data);
+                finish();
+            }
+        });
+
         switch (info){
             case 100:
                 binding.selectTitle.setText(R.string.company_select);

@@ -8,8 +8,8 @@ public class ApiViewModel extends ViewModel {
     public MutableLiveData<String> sessionID = new MutableLiveData<>();
 
     public ApiViewModel(){
-        zone.setValue("CD");
-        sessionID.setValue("");
+//        zone.setValue("CD");
+//        sessionID.setValue("");
     }
 
 }

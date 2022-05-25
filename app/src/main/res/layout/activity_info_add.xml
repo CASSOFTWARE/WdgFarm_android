@@ -92,12 +92,35 @@
             android:layout_marginRight="20dp"
             android:background="@drawable/selector_scale_button"
             android:layout_marginTop="20dp"
-            android:inputType="number"
             style="@style/Work_FontTheme2"
-            android:digits="1234567890."
+
             app:layout_constraintTop_toBottomOf="@+id/info_add_value_text"
             app:layout_constraintLeft_toLeftOf="@+id/info_add_value_text"
             app:layout_constraintWidth_percent="0.5"/>
+
+        <TextView
+            android:id="@+id/info_add_tel_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/company_tel"
+            style="@style/Work_FontTheme1"
+            android:layout_marginTop="40dp"
+            app:layout_constraintLeft_toLeftOf="@+id/info_add_value"
+            app:layout_constraintTop_toBottomOf="@+id/info_add_value"/>
+
+        <EditText
+            android:id="@+id/info_add_tel_value"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/selector_scale_button"
+            android:layout_marginTop="20dp"
+            android:inputType="phone"
+            style="@style/Work_FontTheme2"
+            app:layout_constraintTop_toBottomOf="@+id/info_add_tel_text"
+            app:layout_constraintLeft_toLeftOf="@+id/info_add_tel_text"
+            app:layout_constraintWidth_percent="0.5"/>
+
 
         <Button
             android:id="@+id/info_delete_btn"
