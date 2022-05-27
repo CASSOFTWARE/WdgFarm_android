@@ -36,7 +36,7 @@ public class LoginApi extends AsyncTask<Void, Void, String> {
 
 
         try {
-            URL url = new URL(URLs.BASE_TEST_URL + zone + URLs.LOGIN_URL);
+            URL url = new URL(URLs.BASE_REQUEST_URL + zone + URLs.LOGIN_URL);
             jsonObject.put("COM_CODE", URLs.COM_CODE);
             jsonObject.put("USER_ID", URLs.USER_ID);
             jsonObject.put("API_CERT_KEY", URLs.API_CERT_KEY);

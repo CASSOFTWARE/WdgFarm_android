@@ -34,7 +34,7 @@ public class ZoneApi extends AsyncTask<Void, Void, String> {
 
 
         try {
-            URL url = new URL(URLs.BASE_TEST_URL + URLs.ZONE_URL);
+            URL url = new URL(URLs.BASE_REQUEST_URL + URLs.ZONE_URL);
             jsonObject.put("COM_CODE", URLs.COM_CODE);
 
             conn = (HttpURLConnection) url.openConnection();

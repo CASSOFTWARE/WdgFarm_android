@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -25,8 +26,12 @@ import com.example.wdgfarm_android.fragment.DataFragment;
 import com.example.wdgfarm_android.fragment.HistoryFragment;
 import com.example.wdgfarm_android.fragment.SettingFragment;
 import com.example.wdgfarm_android.fragment.WorkFragment;
+import com.example.wdgfarm_android.utils.PreferencesKey;
+import com.example.wdgfarm_android.utils.SharedPreferencesManager;
+import com.example.wdgfarm_android.utils.TcpThread;
 import com.example.wdgfarm_android.viewmodel.ApiViewModel;
 import com.example.wdgfarm_android.viewmodel.ProductViewModel;
+import com.example.wdgfarm_android.viewmodel.ScaleViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import org.json.JSONException;
@@ -51,12 +56,30 @@ public class MainActivity extends AppCompatActivity {
     private Fragment mActiveFragment = mWorkFragment;
 
     private ApiViewModel apiViewModel;
+    private ScaleViewModel scaleViewModel;
+    TcpThread tcpThread;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //TODO: 초기값 수정
+        if(SharedPreferencesManager.getString(this, PreferencesKey.A_SCALE_IP.name()).matches("")) {
+            SharedPreferencesManager.setString(this, PreferencesKey.A_SCALE_IP.name(), "172.16.18.121");
+        }
+        if(SharedPreferencesManager.getString(this, PreferencesKey.A_SCALE_PORT.name()).matches("")) {
+            SharedPreferencesManager.setString(this, PreferencesKey.A_SCALE_PORT.name(), "4001");
+        }
+        if(SharedPreferencesManager.getString(this, PreferencesKey.B_SCALE_IP.name()).matches("")) {
+            SharedPreferencesManager.setString(this, PreferencesKey.B_SCALE_IP.name(), "172.16.18.122");
+        }
+        if(SharedPreferencesManager.getString(this, PreferencesKey.B_SCALE_PORT.name()).matches("")) {
+            SharedPreferencesManager.setString(this, PreferencesKey.B_SCALE_PORT.name(), "4002");
+        }
+        if(SharedPreferencesManager.getString(this, PreferencesKey.CONNECTED_SCALE.name()).matches("")) {
+            SharedPreferencesManager.setString(this, PreferencesKey.CONNECTED_SCALE.name(), "A");
+        }
 
         bottomNavigationView = findViewById(R.id.bottom_navigation_view);
 
@@ -140,6 +163,19 @@ public class MainActivity extends AppCompatActivity {
                 Log.e("TAG", "Zone 실패");
             }
         }).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+        scaleViewModel = new ViewModelProvider(this).get(ScaleViewModel.class);
+
+        tcpThread = new TcpThread();
+
+        if(SharedPreferencesManager.getString(this, PreferencesKey.CONNECTED_SCALE.name()).contains("A")){
+            tcpThread.TcpThread(SharedPreferencesManager.getString(this, PreferencesKey.A_SCALE_IP.name()), Integer.parseInt(SharedPreferencesManager.getString(this, PreferencesKey.A_SCALE_PORT.name())), scaleViewModel);
+        }else{
+            tcpThread.TcpThread(SharedPreferencesManager.getString(this, PreferencesKey.B_SCALE_IP.name()), Integer.parseInt(SharedPreferencesManager.getString(this, PreferencesKey.B_SCALE_PORT.name())), scaleViewModel);
+        }
+        tcpThread.start();
+
+
     }
 
     //뒤로가기 버튼 두번 누르면 앱 종료
@@ -169,7 +205,6 @@ public class MainActivity extends AppCompatActivity {
         // 현재 표시된 Toast 취소
         if (System.currentTimeMillis() <= backKeyPressedTime + 2000) {
             finish();
-            toast.cancel();
         }
     }
 
@@ -194,6 +229,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onDestroy(){
+        tcpThread.interrupt();
         super.onDestroy();
     }
 }

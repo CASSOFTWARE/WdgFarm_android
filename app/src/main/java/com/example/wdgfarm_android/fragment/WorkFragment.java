@@ -5,11 +5,14 @@ import static android.app.Activity.RESULT_OK;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -28,7 +31,10 @@ import com.example.wdgfarm_android.api.PurchaseApi;
 import com.example.wdgfarm_android.databinding.FragmentWorkBinding;
 import com.example.wdgfarm_android.model.Weighing;
 import com.example.wdgfarm_android.utils.DatetimePickerFragment;
+import com.example.wdgfarm_android.utils.PreferencesKey;
+import com.example.wdgfarm_android.utils.SharedPreferencesManager;
 import com.example.wdgfarm_android.viewmodel.ApiViewModel;
+import com.example.wdgfarm_android.viewmodel.ScaleViewModel;
 import com.example.wdgfarm_android.viewmodel.WeighingViewModel;
 import com.example.wdgfarm_android.viewmodel.WeighingWorkViewModel;
 
@@ -55,6 +61,7 @@ public class WorkFragment extends Fragment {
     public static Weighing weighing;
     public static WeighingWorkViewModel weighingWorkViewModel;
     public static ApiViewModel apiViewModel;
+    public static ScaleViewModel scaleViewModel;
     public static FragmentWorkBinding binding;
 
     public WorkFragment(){
@@ -76,6 +83,45 @@ public class WorkFragment extends Fragment {
         apiViewModel = new ViewModelProvider(getActivity()).get(ApiViewModel.class);
         weighingViewModel = new ViewModelProvider(getActivity()).get(WeighingViewModel.class);
         weighingWorkViewModel = new ViewModelProvider(getActivity()).get(WeighingWorkViewModel.class);
+
+        if(SharedPreferencesManager.getString(getContext(), "CONNECTED_SCALE").contains("B")){
+            binding.radioB.setChecked(true);
+        }else{
+            binding.radioA.setChecked(true);
+        }
+
+        scaleViewModel = new ViewModelProvider(getActivity()).get(ScaleViewModel.class);
+
+        scaleViewModel.weight.observe(getActivity(), new Observer<String>() {
+            @Override
+            public void onChanged(String totalWeight) {
+                binding.totalWeightValue.setText(totalWeight);
+                weighing.setTotalWeight(Float.parseFloat(totalWeight));
+                weighing.setRealWeight(realWeight(weighing.getTotalWeight(), weighing.getBoxWeight(), weighing.getBoxAccount(), weighing.getPaletteWeight(), weighing.getDeductibleWeight()));
+                weighingWorkViewModel.weighing.setValue(weighing);
+            }
+        });
+
+        binding.radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int checkId) {
+                switch (checkId){
+                    case R.id.radio_a:
+                        SharedPreferencesManager.setString(getContext(), PreferencesKey.CONNECTED_SCALE.name(), "A");
+                        scaleViewModel.scaleType.setValue("A");
+                        break;
+
+                    case R.id.radio_b:
+                        SharedPreferencesManager.setString(getContext(), PreferencesKey.CONNECTED_SCALE.name(), "B");
+                        scaleViewModel.scaleType.setValue("B");
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        });
+
         binding.workCompanyBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -94,17 +140,112 @@ public class WorkFragment extends Fragment {
             }
         });
 
+        binding.workPriceEdit.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if(editable.toString().matches("")){
+                    weighing.setProductPrice(0);
+                }
+                else {
+                    weighing.setProductPrice(Integer.parseInt(editable.toString()));
+                }
+                weighingWorkViewModel.weighing.setValue(weighing);
+            }
+        });
+
         weighingWorkViewModel.weighing.setValue(weighing);
+        binding.boxAccountValue.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if(editable.toString().matches("")){
+                    weighing.setBoxAccount(0);
+                }
+                else {
+                    weighing.setBoxAccount(Integer.parseInt(editable.toString()));
+                }
+                weighing.setRealWeight(realWeight(weighing.getTotalWeight(), weighing.getBoxWeight(), weighing.getBoxAccount(), weighing.getPaletteWeight(), weighing.getDeductibleWeight()));
+                weighingWorkViewModel.weighing.setValue(weighing);
+            }
+        });
+
+        binding.paletteWeightValue.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if(editable.toString().matches("")){
+                    weighing.setPaletteWeight(0);
+                }
+                else {
+                    weighing.setPaletteWeight(Integer.parseInt(editable.toString()));
+                }
+                weighing.setRealWeight(realWeight(weighing.getTotalWeight(), weighing.getBoxWeight(), weighing.getBoxAccount(), weighing.getPaletteWeight(), weighing.getDeductibleWeight()));
+                weighingWorkViewModel.weighing.setValue(weighing);
+            }
+        });
+
+        binding.deductibleWeightValue.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if(editable.toString().matches("")){
+                    weighing.setDeductibleWeight(0);
+                }
+                else {
+                    weighing.setDeductibleWeight(Integer.parseInt(editable.toString()));
+                }
+                weighing.setRealWeight(realWeight(weighing.getTotalWeight(), weighing.getBoxWeight(), weighing.getBoxAccount(), weighing.getPaletteWeight(), weighing.getDeductibleWeight()));
+                weighingWorkViewModel.weighing.setValue(weighing);
+            }
+        });
 
         weighingWorkViewModel.weighing.observe(getActivity(), new Observer<Weighing>() {
             @Override
             public void onChanged(Weighing weighing) {
                 binding.workCompanyBtn.setText(weighing.getCompanyName());
                 binding.workProductBtn.setText(weighing.getProductName());
-                binding.workPriceEdit.setText(String.valueOf(weighing.getProductPrice()));
+                //binding.workPriceEdit.setText(String.valueOf(weighing.getProductPrice()));
                 binding.workDateBtn.setText(format.format(weighing.getDate()));
                 binding.boxSize.setText(weighing.getBoxName());
                 binding.boxWeightValue.setText(String.valueOf(weighing.getBoxWeight()));
+                binding.realWeightValue.setText(String.valueOf(weighing.getRealWeight()));
             }
         });
 
@@ -229,7 +370,7 @@ public class WorkFragment extends Fragment {
                     weighing.setProductCode(data.getStringExtra(InfoAddActivity.EXTRA_CODE));
                     weighing.setProductName(data.getStringExtra(InfoAddActivity.EXTRA_NAME));
                     weighing.setProductPrice(data.getIntExtra(InfoAddActivity.EXTRA_VALUE, 1000));
-
+                    binding.workPriceEdit.setText(String.valueOf(weighing.getProductPrice()));
                     binding.workProductBtn.setTextColor(getResources().getColor(R.color.colorBlack));
                     break;
 
@@ -249,6 +390,15 @@ public class WorkFragment extends Fragment {
             weighingWorkViewModel.weighing.setValue(weighing);
 
         }
+    }
 
+    private float realWeight(float total, float boxWeight, int boxAccount, float palleteWeight, float deductibleWeight){
+        float result;
+        float deductible;
+        result = total - (boxWeight * boxAccount) - palleteWeight;
+        deductible = result/10 * deductibleWeight;
+
+        result = result - deductible;
+        return result;
     }
 }
