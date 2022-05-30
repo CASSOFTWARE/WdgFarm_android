@@ -337,6 +337,17 @@ public class WorkFragment extends Fragment {
             }
         });
 
+        scaleViewModel.scaleState.observe(getActivity(), new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean state) {
+                if(state){
+                    binding.totalWeightValue.setBackgroundColor(getResources().getColor(R.color.colorGreen));
+                }else{
+                    binding.totalWeightValue.setBackgroundColor(getResources().getColor(R.color.colorYellow));
+                }
+            }
+        });
+
         binding.workSaveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -450,13 +461,14 @@ public class WorkFragment extends Fragment {
         }
     }
 
-    private float realWeight(float total, float boxWeight, int boxAccount, float palleteWeight, int deductibleWeight){
+    private float realWeight(float total, float boxWeight, int boxAccount, float palleteWeight, float deductibleWeight){
         float result;
         float deductible;
         result = total - (boxWeight * boxAccount) - palleteWeight;
         deductible = (result/10) * (deductibleWeight/1000);
 
         result = result - deductible;
+        result = Float.parseFloat(String.format("%.1f", result));
         return result;
     }
 }

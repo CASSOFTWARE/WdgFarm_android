@@ -177,14 +177,23 @@ public class InfoActivity extends AppCompatActivity {
         switch (info) {
             case "상품 정보":
                 binding.recyclerView.setAdapter(productAdapter);
+                binding.titleProductCode.setVisibility(View.VISIBLE);
+                binding.titleProductName.setVisibility(View.VISIBLE);
+                binding.titleProductPrice.setVisibility(View.VISIBLE);
                 break;
 
             case "거래처 정보":
                 binding.recyclerView.setAdapter(companyAdapter);
+                binding.titleInfoCode.setVisibility(View.VISIBLE);
+                binding.titleInfoValue.setVisibility(View.VISIBLE);
                 break;
 
             case "박스 정보":
                 binding.recyclerView.setAdapter(boxAdapter);
+                binding.titleInfoCode.setVisibility(View.VISIBLE);
+                binding.titleInfoValue.setVisibility(View.VISIBLE);
+                binding.titleInfoCode.setText(R.string.box_name);
+                binding.titleInfoValue.setText(R.string.box_weight);
                 break;
 
             default:
