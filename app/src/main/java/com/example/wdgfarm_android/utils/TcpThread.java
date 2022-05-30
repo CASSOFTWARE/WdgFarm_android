@@ -44,27 +44,33 @@ public class TcpThread extends Thread {
         try {
             outputStream = socket.getOutputStream();
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         try{
             while (!isInterrupted()) // read the data sent from the server
             {
-                final byte [] buffer = new byte [1024]; // create receive buffer
-                inputStream = socket.getInputStream();
-                final int len = inputStream.read(buffer); // read the data and return the length of the data
-                if(len>0)
-                {
-                    if(new String(buffer, 0, len).startsWith("ST") || new String(buffer, 0, len).startsWith("US")){
-                        data = new String(buffer, 0, len);
-                    }else{
-                        data += new String(buffer, 0, len);
-                        cas22BytesProtocol.recvPacket(data, scaleViewModel);
-                        data = "";
+                try {
+                    final byte[] buffer = new byte[1024]; // create receive buffer
+                    inputStream = socket.getInputStream();
+                    final int len = inputStream.read(buffer); // read the data and return the length of the data
+                    if (len > 0) {
+                        if (new String(buffer, 0, len).startsWith("ST") || new String(buffer, 0, len).startsWith("US")) {
+                            data = new String(buffer, 0, len);
+                        } else {
+                            data += new String(buffer, 0, len);
+                            cas22BytesProtocol.recvPacket(data, scaleViewModel);
+                            data = "";
+                        }
                     }
+                }catch (Exception e){
+                    this.interrupt();
+                    e.printStackTrace();
                 }
             }
-            socket.close();
+            if(socket != null) {
+                socket.close();
+            }
         }
         catch (IOException e) {
             try {

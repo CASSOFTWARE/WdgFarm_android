@@ -15,4 +15,8 @@
         <item name="android:textColor">@color/colorBlack</item>
     </style>
 
+    <style name="Work_FontTheme3" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:textSize">45dp</item>
+        <item name="android:textColor">@color/colorBlack</item>
+    </style>
 </resources>

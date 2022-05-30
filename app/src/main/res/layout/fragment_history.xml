@@ -129,6 +129,19 @@
             app:layout_constraintStart_toEndOf="@+id/textview_search_dash"
             app:layout_constraintTop_toTopOf="@+id/button_search_date_from" />
 
+        <TextView
+            android:id="@+id/history_search_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/Work_FontTheme1"
+            android:text="0 개"
+            app:layout_constraintRight_toRightOf="@+id/button_search_detail"
+            app:layout_constraintTop_toTopOf="@id/button_search_date_from"
+            app:layout_constraintBottom_toBottomOf="@id/button_search_date_from"
+            />
+
+
+
         <LinearLayout
             android:id="@+id/history_spinner_layout"
             android:layout_width="wrap_content"
@@ -154,6 +167,7 @@
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:paddingLeft="50dp"
+            android:singleLine="true"
             style="@style/Work_FontTheme2"
             app:layout_constraintTop_toTopOf="@+id/history_spinner_layout"
             app:layout_constraintBottom_toBottomOf="@+id/history_spinner_layout"

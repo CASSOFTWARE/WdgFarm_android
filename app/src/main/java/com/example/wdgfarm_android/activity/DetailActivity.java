@@ -68,7 +68,7 @@ public class DetailActivity extends AppCompatActivity {
         binding.paletteWeightValue.setText(String.valueOf(intent.getExtras().getFloat(EXTRA_PALETTE_WEIGHT, 0)));
         binding.deductibleWeightValue.setText(String.valueOf(intent.getExtras().getFloat(EXTRA_DEDUCTIBLE_WEIGHT, 0)));
 
-        binding.realWeightValue.setText(String.valueOf(intent.getExtras().getFloat(EXTRA_REAL_WEIGHT, 0))+" kg");
+        binding.realWeightValue.setText(String.valueOf(intent.getExtras().getFloat(EXTRA_REAL_WEIGHT, 0)));
         binding.erpTimeValue.setText(intent.getExtras().getString(EXTRA_ERP_DATE));
 
     }

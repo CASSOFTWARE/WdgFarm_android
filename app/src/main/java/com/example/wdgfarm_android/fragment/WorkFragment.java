@@ -25,6 +25,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.wdgfarm_android.R;
 import com.example.wdgfarm_android.activity.InfoAddActivity;
+import com.example.wdgfarm_android.activity.MainActivity;
 import com.example.wdgfarm_android.activity.SelectActivity;
 import com.example.wdgfarm_android.api.ApiListener;
 import com.example.wdgfarm_android.api.PurchaseApi;
@@ -33,11 +34,13 @@ import com.example.wdgfarm_android.model.Weighing;
 import com.example.wdgfarm_android.utils.DatetimePickerFragment;
 import com.example.wdgfarm_android.utils.PreferencesKey;
 import com.example.wdgfarm_android.utils.SharedPreferencesManager;
+import com.example.wdgfarm_android.utils.TcpThread;
 import com.example.wdgfarm_android.viewmodel.ApiViewModel;
 import com.example.wdgfarm_android.viewmodel.ScaleViewModel;
 import com.example.wdgfarm_android.viewmodel.WeighingViewModel;
 import com.example.wdgfarm_android.viewmodel.WeighingWorkViewModel;
 
+import org.apache.poi.ss.formula.functions.T;
 import org.json.JSONException;
 
 import java.text.Format;
@@ -63,9 +66,9 @@ public class WorkFragment extends Fragment {
     public static ApiViewModel apiViewModel;
     public static ScaleViewModel scaleViewModel;
     public static FragmentWorkBinding binding;
+    private TcpThread tcpThread;
 
     public WorkFragment(){
-
     }
 
     @Override
@@ -83,14 +86,32 @@ public class WorkFragment extends Fragment {
         apiViewModel = new ViewModelProvider(getActivity()).get(ApiViewModel.class);
         weighingViewModel = new ViewModelProvider(getActivity()).get(WeighingViewModel.class);
         weighingWorkViewModel = new ViewModelProvider(getActivity()).get(WeighingWorkViewModel.class);
+        scaleViewModel = new ViewModelProvider(getActivity()).get(ScaleViewModel.class);
 
         if(SharedPreferencesManager.getString(getContext(), "CONNECTED_SCALE").contains("B")){
             binding.radioB.setChecked(true);
         }else{
             binding.radioA.setChecked(true);
         }
+        tcpThread = new TcpThread();
 
-        scaleViewModel = new ViewModelProvider(getActivity()).get(ScaleViewModel.class);
+        if(SharedPreferencesManager.getString(getContext(), PreferencesKey.CONNECTED_SCALE.name()).contains("A")){
+            tcpThread.TcpThread(SharedPreferencesManager.getString(getContext(), PreferencesKey.A_SCALE_IP.name()), Integer.parseInt(SharedPreferencesManager.getString(getContext(), PreferencesKey.A_SCALE_PORT.name())), scaleViewModel);
+        }else{
+            tcpThread.TcpThread(SharedPreferencesManager.getString(getContext(), PreferencesKey.B_SCALE_IP.name()), Integer.parseInt(SharedPreferencesManager.getString(getContext(), PreferencesKey.B_SCALE_PORT.name())), scaleViewModel);
+        }
+
+        tcpThread.start();
+
+        scaleViewModel.scaleType.observe(getActivity(), new Observer<String>() {
+            @Override
+            public void onChanged(String scaleType) {
+                if(tcpThread != null) {
+                    tcpThread.interrupt();
+                    tcpThread = null;
+                }
+            }
+        });
 
         scaleViewModel.weight.observe(getActivity(), new Observer<String>() {
             @Override
@@ -109,6 +130,7 @@ public class WorkFragment extends Fragment {
                     case R.id.radio_a:
                         SharedPreferencesManager.setString(getContext(), PreferencesKey.CONNECTED_SCALE.name(), "A");
                         scaleViewModel.scaleType.setValue("A");
+
                         break;
 
                     case R.id.radio_b:
@@ -160,6 +182,21 @@ public class WorkFragment extends Fragment {
                     weighing.setProductPrice(Integer.parseInt(editable.toString()));
                 }
                 weighingWorkViewModel.weighing.setValue(weighing);
+            }
+        });
+
+        binding.scaleConnectBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                tcpThread = new TcpThread();
+                if(scaleViewModel.scaleType.getValue().contains("A")){
+                    tcpThread.TcpThread(SharedPreferencesManager.getString(getContext(), PreferencesKey.A_SCALE_IP.name()), Integer.parseInt(SharedPreferencesManager.getString(getContext(), PreferencesKey.A_SCALE_PORT.name())), scaleViewModel);
+                }
+                else{
+                    tcpThread.TcpThread(SharedPreferencesManager.getString(getContext(), PreferencesKey.B_SCALE_IP.name()), Integer.parseInt(SharedPreferencesManager.getString(getContext(), PreferencesKey.B_SCALE_PORT.name())), scaleViewModel);
+                }
+                tcpThread.start();
+
             }
         });
 
@@ -241,7 +278,6 @@ public class WorkFragment extends Fragment {
             public void onChanged(Weighing weighing) {
                 binding.workCompanyBtn.setText(weighing.getCompanyName());
                 binding.workProductBtn.setText(weighing.getProductName());
-                //binding.workPriceEdit.setText(String.valueOf(weighing.getProductPrice()));
                 binding.workDateBtn.setText(format.format(weighing.getDate()));
                 binding.boxSize.setText(weighing.getBoxName());
                 binding.boxWeightValue.setText(String.valueOf(weighing.getBoxWeight()));
@@ -307,8 +343,8 @@ public class WorkFragment extends Fragment {
                     weighing.setBoxWeight(Float.parseFloat(binding.boxWeightValue.getText().toString()));
                     weighing.setBoxAccount(Integer.parseInt(binding.boxAccountValue.getText().toString()));
                     weighing.setPaletteWeight(Float.parseFloat(binding.paletteWeightValue.getText().toString()));
-                    weighing.setDeductibleWeight(Float.parseFloat(binding.deductibleWeightValue.getText().toString()));
-                    weighing.setRealWeight(Float.parseFloat(binding.realWeightValue.getText().toString().replace(" kg","")));
+                    weighing.setDeductibleWeight(Integer.parseInt(binding.deductibleWeightValue.getText().toString()));
+                    weighing.setRealWeight(Float.parseFloat(binding.realWeightValue.getText().toString()));
 
                     weighingWorkViewModel.weighing.setValue(weighing);
                     SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
@@ -369,7 +405,12 @@ public class WorkFragment extends Fragment {
                     weighing.setProductID(data.getIntExtra(InfoAddActivity.EXTRA_ID, 0));
                     weighing.setProductCode(data.getStringExtra(InfoAddActivity.EXTRA_CODE));
                     weighing.setProductName(data.getStringExtra(InfoAddActivity.EXTRA_NAME));
-                    weighing.setProductPrice(data.getIntExtra(InfoAddActivity.EXTRA_VALUE, 1000));
+                    if(data.getStringExtra(InfoAddActivity.EXTRA_VALUE).matches("")){
+                        weighing.setProductPrice(0);
+                    }
+                    else{
+                        weighing.setProductPrice(Integer.parseInt(data.getStringExtra(InfoAddActivity.EXTRA_VALUE)));
+                    }
                     binding.workPriceEdit.setText(String.valueOf(weighing.getProductPrice()));
                     binding.workProductBtn.setTextColor(getResources().getColor(R.color.colorBlack));
                     break;
@@ -392,11 +433,11 @@ public class WorkFragment extends Fragment {
         }
     }
 
-    private float realWeight(float total, float boxWeight, int boxAccount, float palleteWeight, float deductibleWeight){
+    private float realWeight(float total, float boxWeight, int boxAccount, float palleteWeight, int deductibleWeight){
         float result;
         float deductible;
         result = total - (boxWeight * boxAccount) - palleteWeight;
-        deductible = result/10 * deductibleWeight;
+        deductible = (result/10) * (deductibleWeight/1000);
 
         result = result - deductible;
         return result;

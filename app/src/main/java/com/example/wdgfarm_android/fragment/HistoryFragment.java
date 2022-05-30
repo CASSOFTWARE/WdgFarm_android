@@ -79,7 +79,9 @@ public class HistoryFragment extends Fragment {
             @Override
             public void onChanged(List<Weighing> weighings) {
                 weighingAdapter.setWeighings(weighings);
+                binding.historySearchCount.setText(String.valueOf(weighingAdapter.getItemCount())+" 개");
                 binding.weighingRecyclerView.setAdapter(weighingAdapter);
+
             }
         });
         format = new SimpleDateFormat("yyyy/MM/dd a hh:mm");
@@ -95,6 +97,7 @@ public class HistoryFragment extends Fragment {
                     @Override
                     public void onChanged(List<Weighing> weighings) {
                         weighingAdapter.setWeighings(weighings);
+                        binding.historySearchCount.setText(String.valueOf(weighingAdapter.getItemCount())+" 개");
                     }
                 });
             }
@@ -110,6 +113,7 @@ public class HistoryFragment extends Fragment {
                     @Override
                     public void onChanged(List<Weighing> weighings) {
                         weighingAdapter.setWeighings(weighings);
+                        binding.historySearchCount.setText(String.valueOf(weighingAdapter.getItemCount())+" 개");
                     }
                 });
             }
@@ -223,6 +227,7 @@ public class HistoryFragment extends Fragment {
                             @Override
                             public void onChanged(List<Weighing> weighings) {
                                 weighingAdapter.setWeighings(weighings);
+                                binding.historySearchCount.setText(String.valueOf(weighingAdapter.getItemCount())+" 개");
                             }
                         });
                         break;
@@ -231,6 +236,7 @@ public class HistoryFragment extends Fragment {
                             @Override
                             public void onChanged(List<Weighing> weighings) {
                                 weighingAdapter.setWeighings(weighings);
+                                binding.historySearchCount.setText(String.valueOf(weighingAdapter.getItemCount())+" 개");
                             }
                         });
                         break;
@@ -239,6 +245,7 @@ public class HistoryFragment extends Fragment {
                             @Override
                             public void onChanged(List<Weighing> weighings) {
                                 weighingAdapter.setWeighings(weighings);
+                                binding.historySearchCount.setText(String.valueOf(weighingAdapter.getItemCount())+" 개");
                             }
                         });
                         break;

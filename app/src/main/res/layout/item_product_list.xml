@@ -36,7 +36,9 @@
             android:layout_height="wrap_content"
             android:text="방울토마토"
             android:singleLine="true"
+            android:layout_marginLeft="20dp"
             tools:text="방울토마토"
+
             style="@style/Work_FontTheme1"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -56,6 +58,7 @@
             android:layout_height="wrap_content"
             android:text="3500"
             android:singleLine="true"
+            android:layout_marginLeft="10dp"
             tools:text="3500"
             style="@style/Work_FontTheme1"
             app:layout_constraintTop_toTopOf="parent"

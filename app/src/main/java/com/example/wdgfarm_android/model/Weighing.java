@@ -38,7 +38,7 @@ public class Weighing {
 
     private int boxAccount;
     private float paletteWeight;
-    private float deductibleWeight;
+    private int deductibleWeight;
     private float realWeight;
 
     private String erpDate;
@@ -166,11 +166,11 @@ public class Weighing {
         this.paletteWeight = paletteWeight;
     }
 
-    public float getDeductibleWeight() {
+    public int getDeductibleWeight() {
         return deductibleWeight;
     }
 
-    public void setDeductibleWeight(float deductibleWeight) {
+    public void setDeductibleWeight(int deductibleWeight) {
         this.deductibleWeight = deductibleWeight;
     }
 

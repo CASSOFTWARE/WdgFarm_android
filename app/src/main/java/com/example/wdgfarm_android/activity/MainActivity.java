@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.app.Activity;
@@ -46,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
     private FragmentManager mFragmentManager = getSupportFragmentManager();
 
     private BottomNavigationView bottomNavigationView;
+    private TcpThread tcpThread;
 
     private final WorkFragment mWorkFragment = new WorkFragment();
     private final DataFragment mDataFragment = new DataFragment();
@@ -57,7 +59,6 @@ public class MainActivity extends AppCompatActivity {
 
     private ApiViewModel apiViewModel;
     private ScaleViewModel scaleViewModel;
-    TcpThread tcpThread;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,6 +132,7 @@ public class MainActivity extends AppCompatActivity {
 
         apiViewModel = new ViewModelProvider(this).get(ApiViewModel.class);
 
+        //로그인 API
         new ZoneApi(new ApiListener() {
             @Override
             public void success(String response) throws JSONException {
@@ -166,14 +168,25 @@ public class MainActivity extends AppCompatActivity {
 
         scaleViewModel = new ViewModelProvider(this).get(ScaleViewModel.class);
 
-        tcpThread = new TcpThread();
-
-        if(SharedPreferencesManager.getString(this, PreferencesKey.CONNECTED_SCALE.name()).contains("A")){
-            tcpThread.TcpThread(SharedPreferencesManager.getString(this, PreferencesKey.A_SCALE_IP.name()), Integer.parseInt(SharedPreferencesManager.getString(this, PreferencesKey.A_SCALE_PORT.name())), scaleViewModel);
-        }else{
-            tcpThread.TcpThread(SharedPreferencesManager.getString(this, PreferencesKey.B_SCALE_IP.name()), Integer.parseInt(SharedPreferencesManager.getString(this, PreferencesKey.B_SCALE_PORT.name())), scaleViewModel);
-        }
-        tcpThread.start();
+        //TCP 연결
+//        tcpThread = new TcpThread();
+//
+//        if(SharedPreferencesManager.getString(this, PreferencesKey.CONNECTED_SCALE.name()).contains("A")){
+//            tcpThread.TcpThread(SharedPreferencesManager.getString(this, PreferencesKey.A_SCALE_IP.name()), Integer.parseInt(SharedPreferencesManager.getString(this, PreferencesKey.A_SCALE_PORT.name())), scaleViewModel);
+//        }else{
+//            tcpThread.TcpThread(SharedPreferencesManager.getString(this, PreferencesKey.B_SCALE_IP.name()), Integer.parseInt(SharedPreferencesManager.getString(this, PreferencesKey.B_SCALE_PORT.name())), scaleViewModel);
+//        }
+//        tcpThread.start();
+//
+//        scaleViewModel.scaleType.observe(this, new Observer<String>() {
+//            @Override
+//            public void onChanged(String scaleType) {
+//                if(tcpThread != null) {
+//                    tcpThread.interrupt();
+//                    tcpThread = null;
+//                }
+//            }
+//        });
 
 
     }

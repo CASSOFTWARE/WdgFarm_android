@@ -34,6 +34,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="(주)카스"
+            android:layout_marginLeft="20dp"
             android:singleLine="true"
             style="@style/Work_FontTheme1"
             app:layout_constraintTop_toTopOf="parent"
