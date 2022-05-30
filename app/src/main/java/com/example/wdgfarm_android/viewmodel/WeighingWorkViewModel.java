@@ -8,6 +8,7 @@ import com.example.wdgfarm_android.model.Weighing;
 public class WeighingWorkViewModel extends ViewModel {
     public MutableLiveData<Weighing> weighing = new MutableLiveData<>();
     public Weighing weighingdata = new Weighing();
+
     public WeighingWorkViewModel(){
 
         weighingdata.setTotalWeight(0);

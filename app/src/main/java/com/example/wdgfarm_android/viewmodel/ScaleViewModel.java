@@ -11,6 +11,9 @@ public class ScaleViewModel extends ViewModel {
     public MutableLiveData<Boolean> isConnected = new MutableLiveData<>();
     public MutableLiveData<String> scaleType = new MutableLiveData<>();
 
+    public MutableLiveData<String> scaleAName = new MutableLiveData<>();
+    public MutableLiveData<String> scaleBName = new MutableLiveData<>();
+
     public ScaleViewModel(){
 
     }

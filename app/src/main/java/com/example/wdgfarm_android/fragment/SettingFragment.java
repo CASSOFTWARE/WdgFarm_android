@@ -17,6 +17,7 @@ import com.example.wdgfarm_android.R;
 import com.example.wdgfarm_android.databinding.FragmentSettingBinding;
 import com.example.wdgfarm_android.utils.PreferencesKey;
 import com.example.wdgfarm_android.utils.SharedPreferencesManager;
+import com.example.wdgfarm_android.viewmodel.ScaleViewModel;
 
 
 public class SettingFragment extends Fragment {
@@ -26,6 +27,10 @@ public class SettingFragment extends Fragment {
     private Button mSettingSaveButton;
     private EditText mAScaleIpValue, mBScaleIpValue;
     private EditText mAScalePortValue, mBScalePortValue;
+    private EditText mAScaleNameValue, mBScaleNameValue;
+    private EditText mAuthKeyValue;
+
+    public static ScaleViewModel scaleViewModel;
 
     public SettingFragment(){
 
@@ -38,16 +43,29 @@ public class SettingFragment extends Fragment {
         FragmentSettingBinding binding = DataBindingUtil.inflate(inflater, R.layout.fragment_setting, container, false);
         View view = binding.getRoot();
 
+        scaleViewModel = new ViewModelProvider(getActivity()).get(ScaleViewModel.class);
+
+
         mSettingSaveButton = view.findViewById(R.id.setting_save_btn);
+        mAScaleNameValue = view.findViewById(R.id.a_scale_name_value);
         mAScaleIpValue = view.findViewById(R.id.a_scale_ip_value);
         mAScalePortValue = view.findViewById(R.id.a_scale_port_value);
+
+        mBScaleNameValue = view.findViewById(R.id.b_scale_name_value);
         mBScaleIpValue = view.findViewById(R.id.b_scale_ip_value);
         mBScalePortValue = view.findViewById(R.id.b_scale_port_value);
 
+        mAuthKeyValue = view.findViewById(R.id.auth_key_value);
+
+        mAScaleNameValue.setText((SharedPreferencesManager.getString(getContext(), "A_SCALE_NAME")));
         mAScaleIpValue.setText(SharedPreferencesManager.getString(getContext(), "A_SCALE_IP"));
         mAScalePortValue.setText(SharedPreferencesManager.getString(getContext(), "A_SCALE_PORT"));
+
+        mBScaleNameValue.setText((SharedPreferencesManager.getString(getContext(), "B_SCALE_NAME")));
         mBScaleIpValue.setText(SharedPreferencesManager.getString(getContext(), "B_SCALE_IP"));
         mBScalePortValue.setText(SharedPreferencesManager.getString(getContext(), "B_SCALE_PORT"));
+
+        mAuthKeyValue.setText(SharedPreferencesManager.getString(getContext(), "AUTH_KEY"));
 
 
         mSettingSaveButton.setOnClickListener(new View.OnClickListener(){
@@ -62,10 +80,18 @@ public class SettingFragment extends Fragment {
 
     //Preference에 저장
     private void settingScale(){
+        SharedPreferencesManager.setString(getContext(), PreferencesKey.A_SCALE_NAME.name(),mAScaleNameValue.getText().toString());
         SharedPreferencesManager.setString(getContext(), PreferencesKey.A_SCALE_IP.name(),mAScaleIpValue.getText().toString());
         SharedPreferencesManager.setString(getContext(),PreferencesKey.A_SCALE_PORT.name(),mAScalePortValue.getText().toString());
+
+        SharedPreferencesManager.setString(getContext(), PreferencesKey.B_SCALE_NAME.name(),mBScaleNameValue.getText().toString());
         SharedPreferencesManager.setString(getContext(),PreferencesKey.B_SCALE_IP.name(),mBScaleIpValue.getText().toString());
         SharedPreferencesManager.setString(getContext(),PreferencesKey.B_SCALE_PORT.name(),mBScalePortValue.getText().toString());
+
+        SharedPreferencesManager.setString(getContext(),PreferencesKey.AUTH_KEY.name(),mAuthKeyValue.getText().toString());
+
+        scaleViewModel.scaleAName.setValue(mAScaleNameValue.getText().toString());
+        scaleViewModel.scaleBName.setValue(mBScaleNameValue.getText().toString());
         Toast.makeText(getContext(), R.string.save, Toast.LENGTH_SHORT).show();
     }
 }

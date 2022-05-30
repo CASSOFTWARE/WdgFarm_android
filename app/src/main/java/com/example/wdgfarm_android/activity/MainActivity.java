@@ -81,6 +81,17 @@ public class MainActivity extends AppCompatActivity {
         if(SharedPreferencesManager.getString(this, PreferencesKey.CONNECTED_SCALE.name()).matches("")) {
             SharedPreferencesManager.setString(this, PreferencesKey.CONNECTED_SCALE.name(), "A");
         }
+        if(SharedPreferencesManager.getString(this, PreferencesKey.A_SCALE_NAME.name()).matches("")) {
+            SharedPreferencesManager.setString(this, PreferencesKey.A_SCALE_NAME.name(), "A");
+        }
+        if(SharedPreferencesManager.getString(this, PreferencesKey.B_SCALE_NAME.name()).matches("")) {
+            SharedPreferencesManager.setString(this, PreferencesKey.B_SCALE_NAME.name(), "B");
+        }
+        if(SharedPreferencesManager.getString(this, PreferencesKey.AUTH_KEY.name()).matches("")) {
+            SharedPreferencesManager.setString(this, PreferencesKey.AUTH_KEY.name(), "5016c92e7e510484ab20e7013c0848fbd6");
+        }
+
+
 
         bottomNavigationView = findViewById(R.id.bottom_navigation_view);
 
@@ -139,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
                 JSONObject zoneResult = new JSONObject(response);
                 String zone = zoneResult.getString("ZONE");
 
-                new LoginApi(zone, new ApiListener(){
+                new LoginApi(zone, getApplicationContext(),new ApiListener(){
 
                     @Override
                     public void success(String response) throws JSONException {

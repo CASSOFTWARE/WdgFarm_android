@@ -29,24 +29,30 @@
 
             <RadioButton
                 android:id="@+id/radio_a"
-                android:layout_width="wrap_content"
+                android:layout_width="150dp"
                 android:layout_height="wrap_content"
                 android:background="@drawable/selector_scale_button"
                 android:textColor="@drawable/selector_scale_text"
                 android:textAlignment="center"
+                android:singleLine="true"
                 android:button="@null"
                 android:checked="true"
-                android:text="@string/scale_a"/>
+                android:text="@string/scale_a"
+                style="@style/Work_FontTheme1"
+                />
 
             <RadioButton
                 android:id="@+id/radio_b"
-                android:layout_width="wrap_content"
+                android:layout_width="150dp"
                 android:layout_height="wrap_content"
                 android:background="@drawable/selector_scale_button"
                 android:textColor="@drawable/selector_scale_text"
                 android:textAlignment="center"
+                android:singleLine="true"
                 android:button="@null"
-                android:text="@string/scale_b"/>
+                android:text="@string/scale_b"
+                style="@style/Work_FontTheme1"
+                />
 
         </RadioGroup>
 

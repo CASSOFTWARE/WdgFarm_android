@@ -65,10 +65,14 @@
 
     <!--설정-->
     <string name="setting">설정</string>
+    <string name="scale_a_name">A 저울 이름</string>
     <string name="scale_a_ip">A 저울 IP</string>
     <string name="scale_a_port">A 저울 Port</string>
+    <string name="scale_b_name">B 저울 이름</string>
     <string name="scale_b_ip">B 저울 IP</string>
     <string name="scale_b_port">B 저울 Port</string>
+    <string name="auth_key">인증키</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 

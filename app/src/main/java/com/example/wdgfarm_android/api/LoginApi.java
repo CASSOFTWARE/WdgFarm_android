@@ -1,8 +1,11 @@
 package com.example.wdgfarm_android.api;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.example.wdgfarm_android.utils.PreferencesKey;
+import com.example.wdgfarm_android.utils.SharedPreferencesManager;
 import com.example.wdgfarm_android.utils.URLs;
 
 import org.json.JSONException;
@@ -21,10 +24,12 @@ public class LoginApi extends AsyncTask<Void, Void, String> {
     private ApiListener listener;
     private String zone;
     StringBuilder result;
+    private Context context;
 
-    public LoginApi(String zone, ApiListener listener) {
-        this.listener = listener;
+    public LoginApi(String zone, Context context, ApiListener listener) {
+        this.context = context;
         this.zone = zone;
+        this.listener = listener;
     }
 
     @Override
@@ -39,7 +44,7 @@ public class LoginApi extends AsyncTask<Void, Void, String> {
             URL url = new URL(URLs.BASE_REQUEST_URL + zone + URLs.LOGIN_URL);
             jsonObject.put("COM_CODE", URLs.COM_CODE);
             jsonObject.put("USER_ID", URLs.USER_ID);
-            jsonObject.put("API_CERT_KEY", URLs.API_CERT_KEY);
+            jsonObject.put("API_CERT_KEY", SharedPreferencesManager.getString(context, PreferencesKey.AUTH_KEY.name()));
             jsonObject.put("LAN_TYPE", URLs.LAN_TYPE);
             jsonObject.put("ZONE", zone);
 

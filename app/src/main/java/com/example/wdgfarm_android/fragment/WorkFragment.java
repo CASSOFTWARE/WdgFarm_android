@@ -93,6 +93,9 @@ public class WorkFragment extends Fragment {
         }else{
             binding.radioA.setChecked(true);
         }
+        binding.radioA.setText(SharedPreferencesManager.getString(getContext(), PreferencesKey.A_SCALE_NAME.name()));
+        binding.radioB.setText(SharedPreferencesManager.getString(getContext(), PreferencesKey.B_SCALE_NAME.name()));
+
         tcpThread = new TcpThread();
 
         if(SharedPreferencesManager.getString(getContext(), PreferencesKey.CONNECTED_SCALE.name()).contains("A")){
@@ -110,6 +113,20 @@ public class WorkFragment extends Fragment {
                     tcpThread.interrupt();
                     tcpThread = null;
                 }
+            }
+        });
+
+        scaleViewModel.scaleAName.observe(getActivity(), new Observer<String>() {
+            @Override
+            public void onChanged(String s) {
+                binding.radioA.setText(s);
+            }
+        });
+
+        scaleViewModel.scaleBName.observe(getActivity(), new Observer<String>() {
+            @Override
+            public void onChanged(String s) {
+                binding.radioB.setText(s);
             }
         });
 
