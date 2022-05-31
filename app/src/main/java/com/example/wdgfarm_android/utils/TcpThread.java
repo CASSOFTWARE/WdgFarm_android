@@ -56,7 +56,7 @@ public class TcpThread extends Thread {
                     final byte[] buffer = new byte[1024]; // create receive buffer
                     inputStream = socket.getInputStream();
                     final int len = inputStream.read(buffer); // read the data and return the length of the data
-
+                    scaleViewModel.isConnected.postValue(true);
                     for(int i = 0 ; i < len ; i++){
                             if (!(buffer[0] == 0x53 || buffer[0] == 0x55 || buffer[0] == 0x4F))  {
                                 break; // 패킷의 시작이 STX가 아닌 경우는 무시
@@ -73,26 +73,19 @@ public class TcpThread extends Thread {
                             break;
                         }
                     }
-                    /*if (len > 0) {
-                        if (new String(buffer, 0, len).startsWith("ST") || new String(buffer, 0, len).startsWith("US")) {
-                            data = new String(buffer, 0, len);
-                        } else {
-                            data += new String(buffer, 0, len);
-                            cas22BytesProtocol.recvPacket(data, scaleViewModel);
-                            data = "";
-                        }
-                    }*/
                 }catch (Exception e){
                     this.interrupt();
                     e.printStackTrace();
                 }
             }
             if(socket != null) {
+                scaleViewModel.isConnected.postValue(false);
                 socket.close();
             }
         }
         catch (IOException e) {
             try {
+                scaleViewModel.isConnected.postValue(false);
                 socket.close();
             } catch (IOException ioException) {
                 ioException.printStackTrace();

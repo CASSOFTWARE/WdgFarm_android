@@ -31,6 +31,7 @@ import com.example.wdgfarm_android.api.ApiListener;
 import com.example.wdgfarm_android.api.PurchaseApi;
 import com.example.wdgfarm_android.databinding.FragmentWorkBinding;
 import com.example.wdgfarm_android.model.Weighing;
+import com.example.wdgfarm_android.utils.CurrentTime;
 import com.example.wdgfarm_android.utils.DatetimePickerFragment;
 import com.example.wdgfarm_android.utils.PreferencesKey;
 import com.example.wdgfarm_android.utils.SharedPreferencesManager;
@@ -68,6 +69,7 @@ public class WorkFragment extends Fragment {
     public static FragmentWorkBinding binding;
     private TcpThread tcpThread;
 
+    private CurrentTime currentTime;
     public WorkFragment(){
     }
 
@@ -96,6 +98,10 @@ public class WorkFragment extends Fragment {
         binding.radioA.setText(SharedPreferencesManager.getString(getContext(), PreferencesKey.A_SCALE_NAME.name()));
         binding.radioB.setText(SharedPreferencesManager.getString(getContext(), PreferencesKey.B_SCALE_NAME.name()));
 
+        currentTime = new CurrentTime();
+        currentTime.CurrentTime(weighingWorkViewModel);
+        currentTime.start();
+
         tcpThread = new TcpThread();
 
         if(SharedPreferencesManager.getString(getContext(), PreferencesKey.CONNECTED_SCALE.name()).contains("A")){
@@ -105,6 +111,15 @@ public class WorkFragment extends Fragment {
         }
 
         tcpThread.start();
+
+        weighingWorkViewModel.date.observe(getActivity(), new Observer<String>() {
+            @Override
+            public void onChanged(String currentTime) {
+                if(binding.workDatetimeCheckbox.isChecked()){
+                    binding.workDateBtn.setText(currentTime);
+                }
+            }
+        });
 
         scaleViewModel.scaleType.observe(getActivity(), new Observer<String>() {
             @Override
@@ -205,15 +220,21 @@ public class WorkFragment extends Fragment {
         binding.scaleConnectBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                tcpThread = new TcpThread();
-                if(scaleViewModel.scaleType.getValue().contains("A")){
-                    tcpThread.TcpThread(SharedPreferencesManager.getString(getContext(), PreferencesKey.A_SCALE_IP.name()), Integer.parseInt(SharedPreferencesManager.getString(getContext(), PreferencesKey.A_SCALE_PORT.name())), scaleViewModel);
+                if(!binding.scaleConnectBtn.isChecked()){
+                    if(tcpThread != null){
+                        tcpThread.interrupt();
+                        tcpThread = null;
+                    }
                 }
-                else{
-                    tcpThread.TcpThread(SharedPreferencesManager.getString(getContext(), PreferencesKey.B_SCALE_IP.name()), Integer.parseInt(SharedPreferencesManager.getString(getContext(), PreferencesKey.B_SCALE_PORT.name())), scaleViewModel);
+                else {
+                    tcpThread = new TcpThread();
+                    if (scaleViewModel.scaleType.getValue().contains("A")) {
+                        tcpThread.TcpThread(SharedPreferencesManager.getString(getContext(), PreferencesKey.A_SCALE_IP.name()), Integer.parseInt(SharedPreferencesManager.getString(getContext(), PreferencesKey.A_SCALE_PORT.name())), scaleViewModel);
+                    } else {
+                        tcpThread.TcpThread(SharedPreferencesManager.getString(getContext(), PreferencesKey.B_SCALE_IP.name()), Integer.parseInt(SharedPreferencesManager.getString(getContext(), PreferencesKey.B_SCALE_PORT.name())), scaleViewModel);
+                    }
+                    tcpThread.start();
                 }
-                tcpThread.start();
-
             }
         });
 
@@ -242,6 +263,19 @@ public class WorkFragment extends Fragment {
             }
         });
 
+        scaleViewModel.isConnected.observe(getActivity(), new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean isConnected) {
+                if(isConnected){
+                    binding.connectionState.setImageResource(R.drawable.ic_baseline_circle_24_green);
+                    binding.scaleConnectBtn.setChecked(true);
+                }
+                else{
+                    binding.connectionState.setImageResource(R.drawable.ic_baseline_circle_24_red);
+                    binding.scaleConnectBtn.setChecked(false);
+                }
+            }
+        });
         binding.paletteWeightValue.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -369,9 +403,14 @@ public class WorkFragment extends Fragment {
                 if (!binding.workProductBtn.getText().toString().contains(INIT_PRODUCT) && !binding.workSaveBtn.getText().toString().contains(INIT_COMPANY) && !binding.workDateBtn.getText().toString().contains(INIT_DATE)) {
                     weighing.setTotalWeight(Float.parseFloat(binding.totalWeightValue.getText().toString()));
                     weighing.setBoxWeight(Float.parseFloat(binding.boxWeightValue.getText().toString()));
-                    weighing.setBoxAccount(Integer.parseInt(binding.boxAccountValue.getText().toString()));
-                    weighing.setPaletteWeight(Float.parseFloat(binding.paletteWeightValue.getText().toString()));
-                    weighing.setDeductibleWeight(Integer.parseInt(binding.deductibleWeightValue.getText().toString()));
+
+                    if(binding.boxAccountValue.getText().toString().matches(""))    weighing.setBoxAccount(0);
+                    else    weighing.setBoxAccount(Integer.parseInt(binding.boxAccountValue.getText().toString()));
+                    if(binding.paletteWeightValue.getText().toString().matches("")) weighing.setPaletteWeight(0);
+                    else    weighing.setPaletteWeight(Float.parseFloat(binding.paletteWeightValue.getText().toString()));
+                    if(binding.deductibleWeightValue.getText().toString().matches(""))  weighing.setDeductibleWeight(0);
+                    else    weighing.setDeductibleWeight(Integer.parseInt(binding.deductibleWeightValue.getText().toString()));
+
                     weighing.setRealWeight(Float.parseFloat(binding.realWeightValue.getText().toString()));
 
                     weighingWorkViewModel.weighing.setValue(weighing);
