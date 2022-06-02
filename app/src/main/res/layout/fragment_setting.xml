@@ -192,6 +192,7 @@
             android:text="@string/save"
             android:textSize="35dp"
             android:layout_marginBottom="20dp"
+            android:background="@drawable/work_info_button"
             app:layout_constraintLeft_toLeftOf="@+id/setting_title"
             app:layout_constraintRight_toRightOf="@+id/a_scale_ip_value"
             app:layout_constraintBottom_toBottomOf="parent"

@@ -8,6 +8,8 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -143,62 +145,9 @@ public class MainActivity extends AppCompatActivity {
 
         apiViewModel = new ViewModelProvider(this).get(ApiViewModel.class);
 
-        //로그인 API
-        new ZoneApi(new ApiListener() {
-            @Override
-            public void success(String response) throws JSONException {
-                JSONObject zoneResult = new JSONObject(response);
-                String zone = zoneResult.getString("ZONE");
-
-                new LoginApi(zone, getApplicationContext(),new ApiListener(){
-
-                    @Override
-                    public void success(String response) throws JSONException {
-                        JSONObject datasResult = new JSONObject(response);
-                        String datas = datasResult.getString("Datas");
-                        JSONObject sessionResult = new JSONObject(datas);
-                        String session = sessionResult.getString("SESSION_ID");
-
-                        apiViewModel.zone.setValue(zone);
-                        apiViewModel.sessionID.setValue(session);
-                        Log.d("TAG", "로그인 성공");
-                    }
-
-                    @Override
-                    public void fail() {
-                        Log.e("TAG", "로그인 실패");
-                    }
-                }).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-            }
-
-            @Override
-            public void fail() {
-                Log.e("TAG", "Zone 실패");
-            }
-        }).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        loginApi();
 
         scaleViewModel = new ViewModelProvider(this).get(ScaleViewModel.class);
-
-        //TCP 연결
-//        tcpThread = new TcpThread();
-//
-//        if(SharedPreferencesManager.getString(this, PreferencesKey.CONNECTED_SCALE.name()).contains("A")){
-//            tcpThread.TcpThread(SharedPreferencesManager.getString(this, PreferencesKey.A_SCALE_IP.name()), Integer.parseInt(SharedPreferencesManager.getString(this, PreferencesKey.A_SCALE_PORT.name())), scaleViewModel);
-//        }else{
-//            tcpThread.TcpThread(SharedPreferencesManager.getString(this, PreferencesKey.B_SCALE_IP.name()), Integer.parseInt(SharedPreferencesManager.getString(this, PreferencesKey.B_SCALE_PORT.name())), scaleViewModel);
-//        }
-//        tcpThread.start();
-//
-//        scaleViewModel.scaleType.observe(this, new Observer<String>() {
-//            @Override
-//            public void onChanged(String scaleType) {
-//                if(tcpThread != null) {
-//                    tcpThread.interrupt();
-//                    tcpThread = null;
-//                }
-//            }
-//        });
-
 
     }
 
@@ -255,5 +204,78 @@ public class MainActivity extends AppCompatActivity {
     public void onDestroy(){
         tcpThread.interrupt();
         super.onDestroy();
+    }
+
+    //로그인 API
+    private void loginApi(){
+        new ZoneApi(new ApiListener() {
+            @Override
+            public void success(String response) throws JSONException {
+                JSONObject zoneResult = new JSONObject(response);
+                String zone = zoneResult.getString("ZONE");
+
+                new LoginApi(zone, getApplicationContext(),new ApiListener(){
+
+                    @Override
+                    public void success(String response) throws JSONException {
+                        JSONObject datasResult = new JSONObject(response);
+                        String datas = datasResult.getString("Datas");
+                        JSONObject sessionResult = new JSONObject(datas);
+                        String session = sessionResult.getString("SESSION_ID");
+
+                        apiViewModel.zone.setValue(zone);
+                        apiViewModel.sessionID.setValue(session);
+
+                        Toast.makeText(getApplicationContext(), "ECOUNT ERP 로그인 성공", Toast.LENGTH_SHORT).show();
+                        Log.d("TAG", "로그인 성공");
+                    }
+
+                    @Override
+                    public void fail() {
+
+                        AlertDialog.Builder dlg = new AlertDialog.Builder(MainActivity.this);
+                        dlg.setTitle("로그인 실패");
+                        dlg.setMessage("ECOUNT ERP 로그인 실패했습니다.");
+                        dlg.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                            }
+                        });
+                        dlg.setNegativeButton(R.string.retry, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                loginApi();
+                            }
+                        });
+
+                        dlg.show();
+                        Log.e("TAG", "로그인 실패");
+                    }
+                }).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            }
+
+            @Override
+            public void fail() {
+                AlertDialog.Builder dlg = new AlertDialog.Builder(MainActivity.this);
+                dlg.setTitle("로그인 Zone 실패");
+                dlg.setMessage("ECOUNT ERP 로그인 실패했습니다.");
+                dlg.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                });
+                dlg.setNegativeButton("재시도", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        loginApi();
+                    }
+                });
+
+                dlg.show();
+                Log.e("TAG", "Zone 실패");
+            }
+        }).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 }

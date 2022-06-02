@@ -77,6 +77,7 @@ public class TcpThread extends Thread {
                     this.interrupt();
                     e.printStackTrace();
                 }
+
             }
             if(socket != null) {
                 scaleViewModel.isConnected.postValue(false);

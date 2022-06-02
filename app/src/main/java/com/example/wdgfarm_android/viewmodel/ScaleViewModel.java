@@ -21,8 +21,7 @@ public class ScaleViewModel extends AndroidViewModel {
 
     public ScaleViewModel(Application application){
         super(application);
-        scaleType.setValue(SharedPreferencesManager.getString(getApplication(), PreferencesKey.CONNECTED_SCALE.name()));
+        //scaleType.setValue(SharedPreferencesManager.getString(getApplication(), PreferencesKey.CONNECTED_SCALE.name()));
         isConnected.setValue(false);
     }
-
 }

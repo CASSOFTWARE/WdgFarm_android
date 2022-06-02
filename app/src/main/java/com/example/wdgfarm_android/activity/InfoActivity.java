@@ -15,7 +15,9 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -283,13 +285,21 @@ public class InfoActivity extends AppCompatActivity {
                         @Override
                         public void success(String response) throws JSONException {
                             productViewModel.insert(product);
-                            Toast.makeText(getApplicationContext(), "Product saved", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "상품 등록 성공", Toast.LENGTH_SHORT).show();
                         }
 
                         @Override
                         public void fail() {
-                            Toast.makeText(getApplicationContext(), "Product saved fail", Toast.LENGTH_SHORT).show();
+                            AlertDialog.Builder dlg = new AlertDialog.Builder(InfoActivity.this);
+                            dlg.setTitle("상품 등록 실패");
+                            dlg.setMessage("상품 등록 실패했습니다.");
+                            dlg.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
 
+                                }
+                            });
+                            dlg.show();
                         }
                     }).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
@@ -309,13 +319,21 @@ public class InfoActivity extends AppCompatActivity {
                         @Override
                         public void success(String response) throws JSONException {
                             companyViewModel.insert(company);
-                            Toast.makeText(getApplicationContext(), "Company saved", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "거래처 등록 성공", Toast.LENGTH_SHORT).show();
                         }
 
                         @Override
                         public void fail() {
-                            Toast.makeText(getApplicationContext(), "Company saved fail", Toast.LENGTH_SHORT).show();
+                            AlertDialog.Builder dlg = new AlertDialog.Builder(InfoActivity.this);
+                            dlg.setTitle("거래처 등록 실패");
+                            dlg.setMessage("거래처 등록 실패했습니다.");
+                            dlg.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
 
+                                }
+                            });
+                            dlg.show();
                         }
                     }).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 

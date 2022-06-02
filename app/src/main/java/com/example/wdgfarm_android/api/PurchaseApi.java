@@ -70,6 +70,7 @@ public class PurchaseApi extends AsyncTask<Void, Void, String> {
 
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", URLs.CONTENT_TYPE);
+            conn.setConnectTimeout(3000);
             conn.setDoOutput(true);
 
             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream()));
