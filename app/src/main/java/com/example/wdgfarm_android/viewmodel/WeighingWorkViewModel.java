@@ -9,9 +9,11 @@ public class WeighingWorkViewModel extends ViewModel {
     public MutableLiveData<Weighing> weighing = new MutableLiveData<>();
     public Weighing weighingdata = new Weighing();
     public MutableLiveData<String> date = new MutableLiveData<>();
+    public MutableLiveData<Boolean> prvRepeat = new MutableLiveData<>();
 
     public WeighingWorkViewModel(){
 
+        prvRepeat.setValue(true);
         weighingdata.setTotalWeight(0);
         weighingdata.setBoxWeight(0);
         weighingdata.setBoxAccount(0);

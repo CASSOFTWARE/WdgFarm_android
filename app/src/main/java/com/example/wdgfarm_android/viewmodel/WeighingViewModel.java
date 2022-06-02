@@ -50,4 +50,11 @@ public class WeighingViewModel extends AndroidViewModel {
 
     public LiveData<List<Weighing>> getFitterProductWeighings(Long from, Long to, String arg){ return repository.getFitterProductWeighings(from, to, arg);}
 
+    public LiveData<List<Weighing>> getFitterNotSendWeighings(Long from, Long to){ return repository.getFitterNotSendWeighings(from, to);}
+
+    public void updateNotSendWeighings(int companyId, String companyCode, String companyName, int id){ repository.updateNotSendWeighings(companyId, companyCode, companyName, id);}
+
+    public void deleteWeighing(int id){ repository.deleteWeighing(id);}
+
+
 }

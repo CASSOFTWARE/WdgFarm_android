@@ -151,6 +151,9 @@ public class WorkFragment extends Fragment {
         scaleViewModel.weight.observe(getActivity(), new Observer<String>() {
             @Override
             public void onChanged(String totalWeight) {
+                if(totalWeight.matches("0.0")){
+                    weighingWorkViewModel.prvRepeat.setValue(true);
+                }
                 binding.totalWeightValue.setText(totalWeight);
                 weighing.setTotalWeight(Float.parseFloat(totalWeight));
                 weighing.setRealWeight(realWeight(weighing.getTotalWeight(), weighing.getBoxWeight(), weighing.getBoxAccount(), weighing.getPaletteWeight(), weighing.getDeductibleWeight()));
@@ -396,70 +399,37 @@ public class WorkFragment extends Fragment {
                     }
                 }
 
-                if (!binding.workProductBtn.getText().toString().contains(INIT_PRODUCT) && !binding.workSaveBtn.getText().toString().contains(INIT_COMPANY) && !binding.workDateBtn.getText().toString().contains(INIT_DATE)) {
-                    weighing.setTotalWeight(Float.parseFloat(binding.totalWeightValue.getText().toString()));
-                    weighing.setBoxWeight(Float.parseFloat(binding.boxWeightValue.getText().toString()));
+                if(weighingWorkViewModel.prvRepeat.getValue()) {
+                    if (!binding.workProductBtn.getText().toString().contains(INIT_PRODUCT) && !binding.workSaveBtn.getText().toString().contains(INIT_COMPANY) && !binding.workDateBtn.getText().toString().contains(INIT_DATE)) {
+                        weighing.setTotalWeight(Float.parseFloat(binding.totalWeightValue.getText().toString()));
+                        weighing.setBoxWeight(Float.parseFloat(binding.boxWeightValue.getText().toString()));
 
-                    if (binding.boxAccountValue.getText().toString().matches(""))
-                        weighing.setBoxAccount(0);
-                    else
-                        weighing.setBoxAccount(Integer.parseInt(binding.boxAccountValue.getText().toString()));
-                    if (binding.paletteWeightValue.getText().toString().matches(""))
-                        weighing.setPaletteWeight(0);
-                    else
-                        weighing.setPaletteWeight(Float.parseFloat(binding.paletteWeightValue.getText().toString()));
-                    if (binding.deductibleWeightValue.getText().toString().matches(""))
-                        weighing.setDeductibleWeight(0);
-                    else
-                        weighing.setDeductibleWeight(Integer.parseInt(binding.deductibleWeightValue.getText().toString()));
+                        if (binding.boxAccountValue.getText().toString().matches(""))
+                            weighing.setBoxAccount(0);
+                        else
+                            weighing.setBoxAccount(Integer.parseInt(binding.boxAccountValue.getText().toString()));
+                        if (binding.paletteWeightValue.getText().toString().matches(""))
+                            weighing.setPaletteWeight(0);
+                        else
+                            weighing.setPaletteWeight(Float.parseFloat(binding.paletteWeightValue.getText().toString()));
+                        if (binding.deductibleWeightValue.getText().toString().matches(""))
+                            weighing.setDeductibleWeight(0);
+                        else
+                            weighing.setDeductibleWeight(Integer.parseInt(binding.deductibleWeightValue.getText().toString()));
 
-                    weighing.setRealWeight(Float.parseFloat(binding.realWeightValue.getText().toString()));
+                        weighing.setRealWeight(Float.parseFloat(binding.realWeightValue.getText().toString()));
 
-                    weighingWorkViewModel.weighing.setValue(weighing);
-                    SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
+                        weighingWorkViewModel.weighing.setValue(weighing);
 
-                    purchaseApi();
-//                    new PurchaseApi(apiViewModel.zone.getValue(), apiViewModel.sessionID.getValue(), format.format(weighing.getDate()), weighing.getCompanyName(), weighing.getProductName(), weighing.getProductPrice(), new ApiListener() {
-//                        @Override
-//                        public void success(String response) throws JSONException {
-//                            Log.d("TAG", "구매 입력 성공");
-//                            long now = System.currentTimeMillis();
-//                            Date date = new Date(now);
-//                            SimpleDateFormat erpFormat = new SimpleDateFormat("yyyy/MM/dd a hh:mm:ss");
-//                            weighing.setErpDate(erpFormat.format(date));
-//                            weighingViewModel.insert(weighing);
-//                            Toast.makeText(getContext(), "저장되었습니다.", Toast.LENGTH_SHORT).show();
-//                        }
-//
-//                        @Override
-//                        public void fail() {
-//                            AlertDialog.Builder dlg = new AlertDialog.Builder(getContext());
-//                            dlg.setTitle("구매 입력 실패");
-//                            dlg.setMessage("구매 입력 실패했습니다.");
-//                            dlg.setPositiveButton("확인", new DialogInterface.OnClickListener() {
-//                                @Override
-//                                public void onClick(DialogInterface dialogInterface, int i) {
-//
-//                                }
-//                            });
-//                            dlg.setNegativeButton("재시도", new DialogInterface.OnClickListener() {
-//                                @Override
-//                                public void onClick(DialogInterface dialogInterface, int i) {
-//
-//                                }
-//                            });
-//
-//                            dlg.show();
-//                            Log.e("TAG", "구매 입력 실패");
-//
-//                        }
-//                    }).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                        purchaseApi();
 
-
+                        weighingWorkViewModel.prvRepeat.setValue(false);
+                    } else {
+                        Toast.makeText(getContext(), "빈칸이 있습니다", Toast.LENGTH_SHORT).show();
+                    }
                 } else {
-                    Toast.makeText(getContext(), "빈칸이 있습니다", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "영점을 맞춘 후 계량해주세요.", Toast.LENGTH_SHORT).show();
                 }
-
             }
         });
 
@@ -530,6 +500,8 @@ public class WorkFragment extends Fragment {
     }
 
     private void purchaseApi(){
+        SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
+
         new PurchaseApi(apiViewModel.zone.getValue(), apiViewModel.sessionID.getValue(), format.format(weighing.getDate()), weighing.getCompanyName(), weighing.getProductName(), weighing.getProductPrice(), new ApiListener() {
             @Override
             public void success(String response) throws JSONException {

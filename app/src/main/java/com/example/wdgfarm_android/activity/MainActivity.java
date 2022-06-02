@@ -49,7 +49,6 @@ public class MainActivity extends AppCompatActivity {
     private FragmentManager mFragmentManager = getSupportFragmentManager();
 
     private BottomNavigationView bottomNavigationView;
-    private TcpThread tcpThread;
 
     private final WorkFragment mWorkFragment = new WorkFragment();
     private final DataFragment mDataFragment = new DataFragment();
@@ -202,7 +201,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onDestroy(){
-        tcpThread.interrupt();
         super.onDestroy();
     }
 

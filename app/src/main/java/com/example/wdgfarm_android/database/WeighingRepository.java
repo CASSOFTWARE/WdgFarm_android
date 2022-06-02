@@ -7,7 +7,6 @@ import androidx.lifecycle.LiveData;
 
 import com.example.wdgfarm_android.model.Weighing;
 
-import java.util.Date;
 import java.util.List;
 
 public class WeighingRepository {
@@ -29,9 +28,8 @@ public class WeighingRepository {
     }
 
     public void delete(Weighing weighing){
-        new DeleteWeighingAsyncTask(weighingDao).execute(weighing);
+        new DeleteAsyncTask(weighingDao).execute(weighing);
     }
-    
 
     public void deleteAllWeighings(){
         new DeleteAllWeighingsAsyncTask(weighingDao).execute();
@@ -51,6 +49,18 @@ public class WeighingRepository {
 
     public LiveData<List<Weighing>> getFitterProductWeighings(Long from, Long to, String arg){
         return weighingDao.getFitterProductWeighings(from, to, arg);
+    }
+
+    public LiveData<List<Weighing>> getFitterNotSendWeighings(Long from, Long to){
+        return weighingDao.getFitterNotSendWeighings(from, to);
+    }
+
+    public void updateNotSendWeighings(int companyId, String companyCode, String companyName, int id){
+        new UpdateNotSendWeighingsAsyncTask(weighingDao, companyId, companyCode, companyName, id).execute();
+    }
+
+    public void deleteWeighing(int id){
+        new DeleteWeighingAsyncTask(weighingDao, id).execute();
     }
 
     private static class InsertWeighingAsyncTask extends AsyncTask<Weighing, Void, Void> {
@@ -79,10 +89,10 @@ public class WeighingRepository {
             return null;
         }
     }
-    private static class DeleteWeighingAsyncTask extends AsyncTask<Weighing, Void, Void> {
+    private static class DeleteAsyncTask extends AsyncTask<Weighing, Void, Void> {
         private WeighingDao weighingDao;
 
-        private DeleteWeighingAsyncTask(WeighingDao weighingDao){
+        private DeleteAsyncTask(WeighingDao weighingDao){
             this.weighingDao = weighingDao;
         }
 
@@ -103,6 +113,44 @@ public class WeighingRepository {
         @Override
         protected Void doInBackground(Weighing... voids){
             weighingDao.deleteAllWeighings();
+            return null;
+        }
+    }
+
+    private static class UpdateNotSendWeighingsAsyncTask extends AsyncTask<Void, Void, Void> {
+        private WeighingDao weighingDao;
+        private int companyId;
+        private String companyCode;
+        private String companyName;
+        private int id;
+
+        private UpdateNotSendWeighingsAsyncTask(WeighingDao weighingDao ,int companyId, String companyCode, String companyName, int id){
+            this.weighingDao = weighingDao;
+            this.companyId = companyId;
+            this.companyCode = companyCode;
+            this.companyName = companyName;
+            this.id = id;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids){
+            weighingDao.updateNotSendWeighings(companyId, companyCode, companyName, id);
+            return null;
+        }
+    }
+
+    private static class DeleteWeighingAsyncTask extends AsyncTask<Void, Void, Void> {
+        private WeighingDao weighingDao;
+        private int id;
+
+        private DeleteWeighingAsyncTask(WeighingDao weighingDao, int id){
+            this.weighingDao = weighingDao;
+            this.id = id;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids){
+            weighingDao.deleteWeighing(id);
             return null;
         }
     }

@@ -9,6 +9,8 @@
     <string name="add">추가</string>
     <string name="ok">확인</string>
     <string name="retry">재시도</string>
+    <string name="update">수정</string>
+
 
 
     <string name="back_exit">\'뒤로\' 버튼을 한번 더 누르시면 종료됩니다.</string>
@@ -46,6 +48,7 @@
     <string name="today">오늘</string>
     <string name="week">1주일</string>
     <string name="search">검색</string>
+    <string name="send_erp">ERP 전송</string>
     <string name="no_data_available">데이터가 없습니다.</string>
     <string name="measurement_detail">계량 상세 정보</string>
     <string name="erp_time">ERP 연동 시간</string>

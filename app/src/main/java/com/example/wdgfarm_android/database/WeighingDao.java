@@ -40,4 +40,12 @@ public interface WeighingDao {
     @Query("SELECT * FROM weighing_table WHERE date BETWEEN :from AND :to AND productName LIKE :arg ORDER BY date DESC")
     LiveData<List<Weighing>> getFitterProductWeighings(Long from, Long to, String arg);
 
+    @Query("SELECT * FROM weighing_table WHERE date BETWEEN :from AND :to AND erpDate LIKE \"전송 실패\" ORDER BY date DESC")
+    LiveData<List<Weighing>> getFitterNotSendWeighings(Long from, Long to);
+
+    @Query("UPDATE weighing_table SET companyID = :companyId, companyCode = :companyCode, companyName = :companyName WHERE id = :id")
+    void updateNotSendWeighings(int companyId, String companyCode, String companyName, int id);
+
+    @Query("DELETE FROM weighing_table WHERE id = :id")
+    void deleteWeighing(int id);
 }
