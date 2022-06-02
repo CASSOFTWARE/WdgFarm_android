@@ -7,6 +7,8 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -63,7 +65,7 @@ public class SelectActivity extends AppCompatActivity {
         productSelectAdapter = new ProductSelectAdapter();
         boxSelectAdapter = new BoxSelectAdapter();
 
-        binding.selectBackBtn.setOnClickListener(new View.OnClickListener(){
+        binding.selectBackBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 onBackPressed();
@@ -73,21 +75,43 @@ public class SelectActivity extends AppCompatActivity {
         binding.selectBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent data = new Intent();
-                data.putExtra(InfoAddActivity.EXTRA_NAME, binding.selectEdit.getText().toString());
-                data.putExtra(EXTRA_INFO, info);
-                setResult(RESULT_OK, data);
-                finish();
+//                Intent data = new Intent();
+//                data.putExtra(InfoAddActivity.EXTRA_NAME, binding.selectEdit.getText().toString());
+//                data.putExtra(EXTRA_INFO, info);
+//                setResult(RESULT_OK, data);
+//                finish();
+                final EditText editText = new EditText(getApplicationContext());
+                editText.setSingleLine(true);
+                AlertDialog.Builder dlg = new AlertDialog.Builder(SelectActivity.this);
+                dlg.setTitle("미등록 거래처");
+                dlg.setMessage("등록되지 않은 거래처를 입력하세요.");
+                dlg.setView(editText);
+                dlg.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Intent data = new Intent();
+                        String newCompanyName = editText.getText().toString();
+                        data.putExtra(InfoAddActivity.EXTRA_NAME, newCompanyName);
+                        data.putExtra(EXTRA_INFO, info);
+
+                        setResult(RESULT_OK, data);
+
+                        finish();
+                    }
+                });
+                dlg.show();
+
             }
         });
 
-        switch (info){
+        switch (info) {
             case 100:
                 binding.selectTitle.setText(R.string.company_select);
                 binding.recyclerView.setAdapter(companySelectAdapter);
                 break;
 
             case 200:
+                binding.selectBtn.setVisibility(View.GONE);
                 binding.selectTitle.setText(R.string.product_select);
                 binding.recyclerView.setAdapter(productSelectAdapter);
                 break;
@@ -166,7 +190,7 @@ public class SelectActivity extends AppCompatActivity {
             }
         });
 
-        EditText editText = (EditText)findViewById(R.id.select_edit) ;
+        EditText editText = (EditText) findViewById(R.id.select_edit);
 
         editText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -186,9 +210,9 @@ public class SelectActivity extends AppCompatActivity {
         });
     }
 
-    private void searchDatabase(String query, int info){
+    private void searchDatabase(String query, int info) {
         String searchQuery = "%" + query + "%";
-        switch (info){
+        switch (info) {
             case 100:
                 companyViewModel.getFiltterCompanys(searchQuery).observe(this, new Observer<List<Company>>() {
                     @Override

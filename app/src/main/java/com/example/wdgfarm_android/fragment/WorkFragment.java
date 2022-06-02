@@ -151,7 +151,7 @@ public class WorkFragment extends Fragment {
         scaleViewModel.weight.observe(getActivity(), new Observer<String>() {
             @Override
             public void onChanged(String totalWeight) {
-                if(totalWeight.matches("0.0")){
+                if (totalWeight.matches("0.0")) {
                     weighingWorkViewModel.prvRepeat.setValue(true);
                 }
                 binding.totalWeightValue.setText(totalWeight);
@@ -375,9 +375,12 @@ public class WorkFragment extends Fragment {
             @Override
             public void onChanged(Boolean state) {
                 if (state) {
-                    binding.totalWeightValue.setBackgroundColor(getResources().getColor(R.color.colorGreen));
+                    binding.totalWeightValue.setBackground(getResources().getDrawable(R.drawable.work_weight_stable));
+
                 } else {
-                    binding.totalWeightValue.setBackgroundColor(getResources().getColor(R.color.colorYellow));
+                    binding.totalWeightValue.setBackground(getResources().getDrawable(R.drawable.work_weight_unstable));
+
+
                 }
             }
         });
@@ -399,7 +402,7 @@ public class WorkFragment extends Fragment {
                     }
                 }
 
-                if(weighingWorkViewModel.prvRepeat.getValue()) {
+                if (weighingWorkViewModel.prvRepeat.getValue()) {
                     if (!binding.workProductBtn.getText().toString().contains(INIT_PRODUCT) && !binding.workSaveBtn.getText().toString().contains(INIT_COMPANY) && !binding.workDateBtn.getText().toString().contains(INIT_DATE)) {
                         weighing.setTotalWeight(Float.parseFloat(binding.totalWeightValue.getText().toString()));
                         weighing.setBoxWeight(Float.parseFloat(binding.boxWeightValue.getText().toString()));
@@ -421,8 +424,12 @@ public class WorkFragment extends Fragment {
 
                         weighingWorkViewModel.weighing.setValue(weighing);
 
-                        purchaseApi();
-
+                        if (weighing.getCompanyCode() == null) {
+                            weighing.setErpDate("전송 실패");
+                            weighingViewModel.insert(weighing);
+                        } else {
+                            purchaseApi();
+                        }
                         weighingWorkViewModel.prvRepeat.setValue(false);
                     } else {
                         Toast.makeText(getContext(), "빈칸이 있습니다", Toast.LENGTH_SHORT).show();
@@ -449,6 +456,8 @@ public class WorkFragment extends Fragment {
                         weighing.setCompanyCode(data.getStringExtra(InfoAddActivity.EXTRA_CODE));
                         weighing.setCompanyName(data.getStringExtra(InfoAddActivity.EXTRA_NAME));
                     } else {
+                        weighing.setCompanyID(0);
+                        weighing.setCompanyCode(null);
                         weighing.setCompanyName(data.getStringExtra(InfoAddActivity.EXTRA_NAME));
                     }
                     binding.workCompanyBtn.setTextColor(getResources().getColor(R.color.colorBlack));
@@ -459,7 +468,7 @@ public class WorkFragment extends Fragment {
                     weighing.setProductID(data.getIntExtra(InfoAddActivity.EXTRA_ID, 0));
                     weighing.setProductCode(data.getStringExtra(InfoAddActivity.EXTRA_CODE));
                     weighing.setProductName(data.getStringExtra(InfoAddActivity.EXTRA_NAME));
-                    if(data.hasExtra(InfoAddActivity.EXTRA_VALUE)) {
+                    if (data.hasExtra(InfoAddActivity.EXTRA_VALUE)) {
                         if (data.getStringExtra(InfoAddActivity.EXTRA_VALUE).matches("")) {
                             weighing.setProductPrice(0);
                         } else {
@@ -499,7 +508,7 @@ public class WorkFragment extends Fragment {
         return result;
     }
 
-    private void purchaseApi(){
+    private void purchaseApi() {
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
 
         new PurchaseApi(apiViewModel.zone.getValue(), apiViewModel.sessionID.getValue(), format.format(weighing.getDate()), weighing.getCompanyName(), weighing.getProductName(), weighing.getProductPrice(), new ApiListener() {
