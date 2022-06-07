@@ -85,8 +85,6 @@ public class WorkFragment extends Fragment {
         weighing.setDate(Calendar.getInstance().getTime());
 
 
-
-
         format = new SimpleDateFormat("yyyy/MM/dd a hh:mm");
 
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_work, container, false);
@@ -117,6 +115,37 @@ public class WorkFragment extends Fragment {
         }
 
         tcpThread.start();
+
+        //TCP 연결 끊어지면 5초 마다 연결 시도
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    if(!scaleViewModel.isConnected.getValue()){
+                        if (tcpThread != null) {
+                            tcpThread.interrupt();
+                            tcpThread = null;
+                        }
+
+                        tcpThread = new TcpThread();
+
+                        if (SharedPreferencesManager.getString(getContext(), PreferencesKey.CONNECTED_SCALE.name()).contains("A")) {
+                            tcpThread.TcpThread(SharedPreferencesManager.getString(getContext(), PreferencesKey.A_SCALE_IP.name()), Integer.parseInt(SharedPreferencesManager.getString(getContext(), PreferencesKey.A_SCALE_PORT.name())), scaleViewModel);
+                        } else {
+                            tcpThread.TcpThread(SharedPreferencesManager.getString(getContext(), PreferencesKey.B_SCALE_IP.name()), Integer.parseInt(SharedPreferencesManager.getString(getContext(), PreferencesKey.B_SCALE_PORT.name())), scaleViewModel);
+                        }
+
+                        tcpThread.start();
+                    }
+
+                    try {
+                        Thread.sleep(5000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }).start();
 
         weighingWorkViewModel.date.observe(getActivity(), new Observer<String>() {
             @Override
