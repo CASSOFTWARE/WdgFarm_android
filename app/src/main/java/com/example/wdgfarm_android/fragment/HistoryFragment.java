@@ -1,7 +1,10 @@
 package com.example.wdgfarm_android.fragment;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -13,23 +16,30 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.os.Parcelable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.example.wdgfarm_android.R;
 import com.example.wdgfarm_android.activity.DetailActivity;
 import com.example.wdgfarm_android.activity.InfoAddActivity;
 import com.example.wdgfarm_android.adapter.SpinnerAdapter;
 import com.example.wdgfarm_android.adapter.WeighingAdapter;
+import com.example.wdgfarm_android.api.ApiListener;
+import com.example.wdgfarm_android.api.PurchaseApi;
 import com.example.wdgfarm_android.databinding.FragmentHistoryBinding;
 import com.example.wdgfarm_android.model.Weighing;
 import com.example.wdgfarm_android.utils.Constants;
 import com.example.wdgfarm_android.utils.DatePickerFragment;
+import com.example.wdgfarm_android.viewmodel.ApiViewModel;
 import com.example.wdgfarm_android.viewmodel.HistoryViewModel;
 import com.example.wdgfarm_android.viewmodel.WeighingViewModel;
+
+import org.json.JSONException;
 
 import java.io.Serializable;
 import java.text.DateFormat;
@@ -52,6 +62,8 @@ public class HistoryFragment extends Fragment {
     private HistoryViewModel historyViewModel;
     private WeighingViewModel weighingViewModel;
     private FragmentHistoryBinding binding;
+    public static ApiViewModel apiViewModel;
+    int failCnt = 0;
 
     public HistoryFragment() {
     }
@@ -69,6 +81,7 @@ public class HistoryFragment extends Fragment {
 
         weighingViewModel = new ViewModelProvider(getActivity()).get(WeighingViewModel.class);
         historyViewModel = new ViewModelProvider(getActivity()).get(HistoryViewModel.class);
+        apiViewModel = new ViewModelProvider(getActivity()).get(ApiViewModel.class);
 
 
         WeighingAdapter weighingAdapter = new WeighingAdapter();
@@ -77,51 +90,67 @@ public class HistoryFragment extends Fragment {
 
         binding.weighingRecyclerView.setAdapter(weighingAdapter);
 
-        weighingViewModel.getAllWeighings().observe(getActivity(), new Observer<List<Weighing>>() {
-            @Override
-            public void onChanged(List<Weighing> weighings) {
-                weighingAdapter.setWeighings(weighings);
-                binding.historySearchCount.setText(String.valueOf(weighingAdapter.getItemCount()) + " 개");
-                binding.weighingRecyclerView.setAdapter(weighingAdapter);
-
-            }
-        });
+//        weighingViewModel.getAllWeighings().observe(getActivity(), new Observer<List<Weighing>>() {
+//            @Override
+//            public void onChanged(List<Weighing> weighings) {
+//                weighingAdapter.setWeighings(weighings);
+//                binding.historySearchCount.setText(String.valueOf(weighingAdapter.getItemCount()) + " 개");
+//                binding.weighingRecyclerView.setAdapter(weighingAdapter);
+//
+//            }
+//        });
         format = new SimpleDateFormat("yyyy/MM/dd a hh:mm");
         dateFormat = new SimpleDateFormat("yyyy/MM/dd");
 
-        historyViewModel.dateFrom.observe(getActivity(), new Observer<Date>() {
+        historyViewModel.updateDate.observe(getActivity(), new Observer<Boolean>() {
             @Override
-            public void onChanged(Date date) {
-                binding.buttonSearchDateFrom.setText(dateFormat.format(historyViewModel.dateFrom.getValue()));
-                binding.searchEdittext.setText("");
-                binding.historySpinner.setSelection(0);
-                binding.buttonSendErp.setEnabled(false);
-                weighingViewModel.getFitterDateWeighings(date.getTime(), historyViewModel.dateTo.getValue().getTime()).observe(getActivity(), new Observer<List<Weighing>>() {
+            public void onChanged(Boolean aBoolean) {
+                historyViewModel.dateFrom.observe(getActivity(), new Observer<Date>() {
                     @Override
-                    public void onChanged(List<Weighing> weighings) {
-                        weighingAdapter.setWeighings(weighings);
-                        binding.historySearchCount.setText(String.valueOf(weighingAdapter.getItemCount()) + " 개");
+                    public void onChanged(Date date) {
+                        binding.buttonSearchDateFrom.setText(dateFormat.format(historyViewModel.dateFrom.getValue()));
+                        binding.searchEdittext.setText("");
+                        binding.historySpinner.setSelection(0);
+                        binding.buttonSendErp.setEnabled(false);
+                        weighingViewModel.getFitterDateWeighings(date.getTime(), historyViewModel.dateTo.getValue().getTime()).observe(getActivity(), new Observer<List<Weighing>>() {
+                            @Override
+                            public void onChanged(List<Weighing> weighings) {
+                                if(historyViewModel.spinnerData.getValue().contains("미전송")) {
+                                    //weighingAdapter.setWeighings(weighingViewModel.getFitterNotSendWeighings(historyViewModel.dateFrom.getValue().getTime(), historyViewModel.dateTo.getValue().getTime()).getValue());
+                                }
+                                else {
+                                    weighingAdapter.setWeighings(weighings);
+                                }
+                                binding.historySearchCount.setText(String.valueOf(weighingAdapter.getItemCount()) + " 개");
+                            }
+                        });
+                    }
+                });
+
+                historyViewModel.dateTo.observe(getActivity(), new Observer<Date>() {
+                    @Override
+                    public void onChanged(Date date) {
+                        binding.buttonSearchDateTo.setText(dateFormat.format(historyViewModel.dateTo.getValue()));
+                        binding.searchEdittext.setText("");
+                        binding.historySpinner.setSelection(0);
+                        binding.buttonSendErp.setEnabled(false);
+                        weighingViewModel.getFitterDateWeighings(historyViewModel.dateFrom.getValue().getTime(), date.getTime()).observe(getActivity(), new Observer<List<Weighing>>() {
+                            @Override
+                            public void onChanged(List<Weighing> weighings) {
+                                if(historyViewModel.spinnerData.getValue().contains("미전송")) {
+                                    //weighingAdapter.setWeighings(weighingViewModel.getFitterNotSendWeighings(historyViewModel.dateFrom.getValue().getTime(), historyViewModel.dateTo.getValue().getTime()).getValue());
+                                }
+                                else {
+                                    weighingAdapter.setWeighings(weighings);
+                                }
+                                binding.historySearchCount.setText(String.valueOf(weighingAdapter.getItemCount()) + " 개");
+                            }
+                        });
                     }
                 });
             }
         });
 
-        historyViewModel.dateTo.observe(getActivity(), new Observer<Date>() {
-            @Override
-            public void onChanged(Date date) {
-                binding.buttonSearchDateTo.setText(dateFormat.format(historyViewModel.dateTo.getValue()));
-                binding.searchEdittext.setText("");
-                binding.historySpinner.setSelection(0);
-                binding.buttonSendErp.setEnabled(false);
-                weighingViewModel.getFitterDateWeighings(historyViewModel.dateFrom.getValue().getTime(), date.getTime()).observe(getActivity(), new Observer<List<Weighing>>() {
-                    @Override
-                    public void onChanged(List<Weighing> weighings) {
-                        weighingAdapter.setWeighings(weighings);
-                        binding.historySearchCount.setText(String.valueOf(weighingAdapter.getItemCount()) + " 개");
-                    }
-                });
-            }
-        });
 
         binding.buttonSearchYesterday.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -274,6 +303,39 @@ public class HistoryFragment extends Fragment {
 
             }
         });
+
+        binding.buttonSendErp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SimpleDateFormat formatErp = new SimpleDateFormat("yyyyMMdd");
+                failCnt = 0;
+                for (int i = 0; i < weighingAdapter.getItemCount(); i++) {
+                    Weighing weighing = weighingAdapter.getWeighingAt(i);
+                    long now = System.currentTimeMillis();
+                    Date date = new Date(now);
+                    SimpleDateFormat erpFormat = new SimpleDateFormat("yyyy/MM/dd a hh:mm:ss");
+                    if (weighing.getCompanyCode() == null) {
+                        failCnt++;
+                        Toast.makeText(getContext(), failCnt + " 개 실패", Toast.LENGTH_SHORT).show();
+                    } else {
+
+                        new PurchaseApi(apiViewModel.zone.getValue(), apiViewModel.sessionID.getValue(), formatErp.format(weighing.getDate()), weighing.getCompanyName(), weighing.getProductName(), weighing.getProductPrice(), new ApiListener() {
+                            @Override
+                            public void success(String response) throws JSONException {
+                                weighing.setErpDate(erpFormat.format(date));
+                                weighingViewModel.update(weighing);
+                            }
+
+                            @Override
+                            public void fail() {
+                                failCnt++;
+                                Toast.makeText(getContext(), failCnt + " 개 실패", Toast.LENGTH_SHORT).show();
+                            }
+                        }).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                    }
+                }
+            }
+        });
         return view;
     }
 
@@ -285,7 +347,7 @@ public class HistoryFragment extends Fragment {
             return;
         }
         Date date = (Date) data.getSerializableExtra(DatePickerFragment.EXTRA_DATE);
-
+        historyViewModel.spinnerData.setValue("전체");
         switch (requestCode) {
             case REQUEST_FROM_DATE:
                 date.setHours(0);
@@ -297,6 +359,7 @@ public class HistoryFragment extends Fragment {
                     binding.buttonSearchDateTo.setText(dateFormat.format(date));
                     historyViewModel.dateTo.setValue(historyViewModel.dateFrom.getValue());
                 }
+                historyViewModel.updateDate.setValue(true);
                 break;
 
             case REQUEST_TO_DATE:
@@ -305,6 +368,7 @@ public class HistoryFragment extends Fragment {
                 date.setSeconds(59);
                 binding.buttonSearchDateTo.setText(dateFormat.format(date));
                 historyViewModel.dateTo.setValue(date);
+                historyViewModel.updateDate.setValue(true);
                 break;
 
             default:
@@ -346,6 +410,7 @@ public class HistoryFragment extends Fragment {
 
         historyViewModel.dateTo.setValue(calendarTo.getTime());
         historyViewModel.dateFrom.setValue(calendarFrom.getTime());
+        historyViewModel.updateDate.setValue(true);
 
         binding.buttonSearchDateFrom.setText(dateFormat.format(historyViewModel.dateFrom.getValue()));
         binding.buttonSearchDateTo.setText(dateFormat.format(historyViewModel.dateTo.getValue()));

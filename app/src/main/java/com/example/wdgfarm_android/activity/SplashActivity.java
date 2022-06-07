@@ -6,6 +6,7 @@ import androidx.databinding.DataBindingUtil;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.WindowManager;
 
 import com.example.wdgfarm_android.BuildConfig;
 import com.example.wdgfarm_android.R;
@@ -19,6 +20,7 @@ public class SplashActivity extends AppCompatActivity {
         setContentView(R.layout.activity_splash);
 
         ActivitySplashBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_splash);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         binding.splashVersionText.setText("v" + BuildConfig.VERSION_NAME);
         Handler handler = new Handler();

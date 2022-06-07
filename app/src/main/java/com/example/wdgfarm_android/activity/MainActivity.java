@@ -29,6 +29,7 @@ import com.example.wdgfarm_android.fragment.DataFragment;
 import com.example.wdgfarm_android.fragment.HistoryFragment;
 import com.example.wdgfarm_android.fragment.SettingFragment;
 import com.example.wdgfarm_android.fragment.WorkFragment;
+import com.example.wdgfarm_android.utils.Constants;
 import com.example.wdgfarm_android.utils.PreferencesKey;
 import com.example.wdgfarm_android.utils.SharedPreferencesManager;
 import com.example.wdgfarm_android.utils.TcpThread;
@@ -68,16 +69,16 @@ public class MainActivity extends AppCompatActivity {
 
         //TODO: 초기값 수정
         if(SharedPreferencesManager.getString(this, PreferencesKey.A_SCALE_IP.name()).matches("")) {
-            SharedPreferencesManager.setString(this, PreferencesKey.A_SCALE_IP.name(), "172.16.18.121");
+            SharedPreferencesManager.setString(this, PreferencesKey.A_SCALE_IP.name(), Constants.INIT_IP_A);
         }
         if(SharedPreferencesManager.getString(this, PreferencesKey.A_SCALE_PORT.name()).matches("")) {
-            SharedPreferencesManager.setString(this, PreferencesKey.A_SCALE_PORT.name(), "4001");
+            SharedPreferencesManager.setString(this, PreferencesKey.A_SCALE_PORT.name(), Constants.INIT_PORT_A);
         }
         if(SharedPreferencesManager.getString(this, PreferencesKey.B_SCALE_IP.name()).matches("")) {
-            SharedPreferencesManager.setString(this, PreferencesKey.B_SCALE_IP.name(), "172.16.18.122");
+            SharedPreferencesManager.setString(this, PreferencesKey.B_SCALE_IP.name(), Constants.INIT_IP_B);
         }
         if(SharedPreferencesManager.getString(this, PreferencesKey.B_SCALE_PORT.name()).matches("")) {
-            SharedPreferencesManager.setString(this, PreferencesKey.B_SCALE_PORT.name(), "4002");
+            SharedPreferencesManager.setString(this, PreferencesKey.B_SCALE_PORT.name(), Constants.INIT_PORT_B);
         }
         if(SharedPreferencesManager.getString(this, PreferencesKey.CONNECTED_SCALE.name()).matches("")) {
             SharedPreferencesManager.setString(this, PreferencesKey.CONNECTED_SCALE.name(), "A");
@@ -89,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
             SharedPreferencesManager.setString(this, PreferencesKey.B_SCALE_NAME.name(), "B");
         }
         if(SharedPreferencesManager.getString(this, PreferencesKey.AUTH_KEY.name()).matches("")) {
-            SharedPreferencesManager.setString(this, PreferencesKey.AUTH_KEY.name(), "5016c92e7e510484ab20e7013c0848fbd6");
+            SharedPreferencesManager.setString(this, PreferencesKey.AUTH_KEY.name(), Constants.INIT_API_KEY);
         }
 
 
@@ -234,6 +235,7 @@ public class MainActivity extends AppCompatActivity {
                         AlertDialog.Builder dlg = new AlertDialog.Builder(MainActivity.this);
                         dlg.setTitle("로그인 실패");
                         dlg.setMessage("ECOUNT ERP 로그인 실패했습니다.");
+                        dlg.setCancelable(false);
                         dlg.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {

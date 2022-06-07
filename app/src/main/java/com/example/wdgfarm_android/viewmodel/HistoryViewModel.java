@@ -12,8 +12,10 @@ public class HistoryViewModel extends ViewModel {
     public MutableLiveData<String> spinnerData = new MutableLiveData<>();
     private Calendar calendarFrom = Calendar.getInstance();
     private Calendar calendarTo = Calendar.getInstance();
+    public MutableLiveData<Boolean> updateDate = new MutableLiveData<>();
 
     public HistoryViewModel(){
+        updateDate.setValue(true);
         calendarFrom.set(Calendar.HOUR_OF_DAY, 0);
         calendarFrom.set(Calendar.MINUTE, 0);
         calendarFrom.set(Calendar.SECOND, 0);

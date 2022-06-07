@@ -82,6 +82,7 @@ public class DetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), SelectActivity.class);
+                intent.putExtra(SelectActivity.EXTRA_DETAIL, true);
                 intent.putExtra(SelectActivity.EXTRA_INFO, INFO_COMPANY);
                 startActivityForResult(intent, INFO_COMPANY);
             }
@@ -103,7 +104,7 @@ public class DetailActivity extends AppCompatActivity {
 //                data.putExtra(InfoAddActivity.EXTRA_NAME, companyName);
 //                data.putExtra(EXTRA_ERP_DATE, intent.getExtras().getString(EXTRA_ERP_DATE));
 //                setResult(Activity.RESULT_OK, data);
-
+                companyName = binding.detailCompanyButton.getText().toString();
                 weighingViewModel.updateNotSendWeighings(companyId, companyCode, companyName, weighingId);
                 finish();
             }

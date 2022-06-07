@@ -407,6 +407,7 @@ public class WorkFragment extends Fragment {
                         weighing.setTotalWeight(Float.parseFloat(binding.totalWeightValue.getText().toString()));
                         weighing.setBoxWeight(Float.parseFloat(binding.boxWeightValue.getText().toString()));
 
+                        //입력 안할시 0으로 처리
                         if (binding.boxAccountValue.getText().toString().matches(""))
                             weighing.setBoxAccount(0);
                         else
@@ -427,6 +428,7 @@ public class WorkFragment extends Fragment {
                         if (weighing.getCompanyCode() == null) {
                             weighing.setErpDate("전송 실패");
                             weighingViewModel.insert(weighing);
+                            Toast.makeText(getContext(), "저장되었습니다.", Toast.LENGTH_SHORT).show();
                         } else {
                             purchaseApi();
                         }

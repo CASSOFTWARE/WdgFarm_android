@@ -30,6 +30,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import com.example.wdgfarm_android.BuildConfig;
 import com.example.wdgfarm_android.R;
 import com.example.wdgfarm_android.adapter.BoxAdapter;
 import com.example.wdgfarm_android.adapter.CompanyAdapter;
@@ -119,7 +120,7 @@ public class InfoActivity extends AppCompatActivity {
             @Override
             public void onChanged(String s) {
                 binding.infoTitle.setText(infoViewModel.info.getValue() + "");
-                if(s.contains("박스 정보")){
+                if (s.contains("박스 정보")) {
                     binding.loadFileBtn.setEnabled(false);
                 }
             }
@@ -173,7 +174,6 @@ public class InfoActivity extends AppCompatActivity {
 
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
         binding.recyclerView.setHasFixedSize(true);
-
 
 
         switch (info) {
@@ -504,7 +504,7 @@ public class InfoActivity extends AppCompatActivity {
     private void exportData(String info) {
         String dataString = getDataInCsv(info);
         String fileName = null;
-        switch (info){
+        switch (info) {
             case "상품 정보":
                 fileName = "ProductData.csv";
                 break;
@@ -518,7 +518,7 @@ public class InfoActivity extends AppCompatActivity {
         File file = null;
         File root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
         if (root.canWrite()) {
-            File dir = new File(root.getAbsolutePath() + "/PersonData");
+            File dir = new File(root.getAbsolutePath()+"/PersonData");
             dir.mkdirs();
             file = new File(dir, fileName);
             FileOutputStream out = null;
@@ -544,26 +544,31 @@ public class InfoActivity extends AppCompatActivity {
                 bufferedWriter.write(dataString);
             } catch (IOException e) {
                 e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
             try {
                 bufferedWriter.close();
                 out.close();
             } catch (IOException e) {
                 e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
 
-        Uri uri = FileProvider.getUriForFile(getApplicationContext(), "com.example.wdgfarm_android.provider", file);
+        Uri uri = FileProvider.getUriForFile(getApplicationContext(), BuildConfig.APPLICATION_ID + ".provider", file);
 
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         intent.putExtra(Intent.EXTRA_SUBJECT, "WdgFarm Data");
         intent.putExtra(Intent.EXTRA_STREAM, uri);
         intent.setType("text/html");
-        startActivity(intent);
+        //startActivity(intent);
+        startActivity(intent.createChooser(intent, "Share"));
     }
 
-    public void openFilePicker(){
+    public void openFilePicker() {
         try {
             Intent fileIntent = new Intent(Intent.ACTION_GET_CONTENT);
             fileIntent.addCategory(Intent.CATEGORY_OPENABLE);
@@ -571,12 +576,12 @@ public class InfoActivity extends AppCompatActivity {
             fileIntent.setType("application/*");
 
             filePicker.launch(fileIntent);
-        }catch (Exception e){
+        } catch (Exception e) {
             Log.d("TAG", e.getMessage());
         }
     }
 
-    public void readExcelFile(Context context, Uri uri){
+    public void readExcelFile(Context context, Uri uri) {
         try {
             InputStream inStream;
             Workbook wb = null;
@@ -593,7 +598,7 @@ public class InfoActivity extends AppCompatActivity {
             }
 
             Sheet sheet = wb.getSheetAt(0);
-            switch (info){
+            switch (info) {
                 case "상품 정보":
                     ExcelHelper.importExcelProduct(productViewModel, sheet);
                     break;
@@ -605,7 +610,7 @@ public class InfoActivity extends AppCompatActivity {
             }
 
         } catch (Exception ex) {
-            Log.d("TAG",ex.toString());
+            Log.d("TAG", ex.toString());
         }
     }
 }

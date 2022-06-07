@@ -39,6 +39,7 @@ import java.util.List;
 
 public class SelectActivity extends AppCompatActivity {
     public static final String EXTRA_INFO = "com.example.wdgfarm_android.EXTRA_INFO";
+    public static final String EXTRA_DETAIL = "com.example.wdgfarm_android.EXTRA_DETAIL";
 
     private ProductViewModel productViewModel;
     private CompanyViewModel companyViewModel;
@@ -103,6 +104,8 @@ public class SelectActivity extends AppCompatActivity {
 
             }
         });
+
+        if(intent.getExtras().getBoolean(EXTRA_DETAIL, false))  binding.selectBtn.setVisibility(View.GONE);
 
         switch (info) {
             case 100:
