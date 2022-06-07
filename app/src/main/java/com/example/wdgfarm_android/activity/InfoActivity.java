@@ -70,11 +70,11 @@ public class InfoActivity extends AppCompatActivity {
     public static final int ADD_REQUEST = 1;
     public static final int EDIT_REQUEST = 2;
 
-    private ProductViewModel productViewModel;
-    private CompanyViewModel companyViewModel;
-    private BoxViewModel boxViewModel;
+    private static ProductViewModel productViewModel;
+    private static CompanyViewModel companyViewModel;
+    private static BoxViewModel boxViewModel;
 
-    private String info, zone, session;
+    private static String info, zone, session;
     ActivityResultLauncher<Intent> filePicker;
 
     private static String extensionXLXS = "XLXS";

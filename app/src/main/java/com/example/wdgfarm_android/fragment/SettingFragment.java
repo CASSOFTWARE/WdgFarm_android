@@ -24,11 +24,11 @@ public class SettingFragment extends Fragment {
 
     SharedPreferencesManager sharedPreferencesManager;
 
-    private Button mSettingSaveButton;
-    private EditText mAScaleIpValue, mBScaleIpValue;
-    private EditText mAScalePortValue, mBScalePortValue;
-    private EditText mAScaleNameValue, mBScaleNameValue;
-    private EditText mAuthKeyValue;
+    private static Button mSettingSaveButton;
+    private static EditText mAScaleIpValue, mBScaleIpValue;
+    private static EditText mAScalePortValue, mBScalePortValue;
+    private static EditText mAScaleNameValue, mBScaleNameValue;
+    private static EditText mAuthKeyValue;
 
     public static ScaleViewModel scaleViewModel;
 

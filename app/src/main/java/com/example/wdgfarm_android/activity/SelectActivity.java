@@ -41,12 +41,12 @@ public class SelectActivity extends AppCompatActivity {
     public static final String EXTRA_INFO = "com.example.wdgfarm_android.EXTRA_INFO";
     public static final String EXTRA_DETAIL = "com.example.wdgfarm_android.EXTRA_DETAIL";
 
-    private ProductViewModel productViewModel;
-    private CompanyViewModel companyViewModel;
-    private BoxViewModel boxViewModel;
-    private ProductSelectAdapter productSelectAdapter;
-    private CompanySelectAdapter companySelectAdapter;
-    private BoxSelectAdapter boxSelectAdapter;
+    private static ProductViewModel productViewModel;
+    private static CompanyViewModel companyViewModel;
+    private static BoxViewModel boxViewModel;
+    private static ProductSelectAdapter productSelectAdapter;
+    private static CompanySelectAdapter companySelectAdapter;
+    private static BoxSelectAdapter boxSelectAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,11 +76,7 @@ public class SelectActivity extends AppCompatActivity {
         binding.selectBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Intent data = new Intent();
-//                data.putExtra(InfoAddActivity.EXTRA_NAME, binding.selectEdit.getText().toString());
-//                data.putExtra(EXTRA_INFO, info);
-//                setResult(RESULT_OK, data);
-//                finish();
+
                 final EditText editText = new EditText(getApplicationContext());
                 editText.setSingleLine(true);
                 AlertDialog.Builder dlg = new AlertDialog.Builder(SelectActivity.this);

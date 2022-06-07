@@ -19,12 +19,12 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class LoginApi extends AsyncTask<Void, Void, String> {
-    private final String TAG = "[LoginApi]";
+    private final static String TAG = "[LoginApi]";
 
-    private ApiListener listener;
-    private String zone;
-    StringBuilder result;
-    private Context context;
+    private static ApiListener listener;
+    private static String zone;
+    static StringBuilder result;
+    private static Context context;
 
     public LoginApi(String zone, Context context, ApiListener listener) {
         this.context = context;

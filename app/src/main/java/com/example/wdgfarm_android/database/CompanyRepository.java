@@ -11,8 +11,8 @@ import com.example.wdgfarm_android.model.Product;
 import java.util.List;
 
 public class CompanyRepository {
-    private CompanyDao companyDao;
-    private LiveData<List<Company>> allCompanys;
+    private static CompanyDao companyDao;
+    private static LiveData<List<Company>> allCompanys;
 
     public CompanyRepository(Application application){
         CompanyDatabase database = CompanyDatabase.getInstance(application);

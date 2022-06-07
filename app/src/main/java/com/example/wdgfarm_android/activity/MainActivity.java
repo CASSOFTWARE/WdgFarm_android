@@ -45,7 +45,6 @@ public class MainActivity extends AppCompatActivity {
 
     // 마지막으로 뒤로가기 버튼을 눌렀던 시간 저장
     private long backKeyPressedTime = 0;
-    private Toast toast;
 
     private FragmentManager mFragmentManager = getSupportFragmentManager();
 
@@ -59,8 +58,8 @@ public class MainActivity extends AppCompatActivity {
 
     private Fragment mActiveFragment = mWorkFragment;
 
-    private ApiViewModel apiViewModel;
-    private ScaleViewModel scaleViewModel;
+    private static ApiViewModel apiViewModel;
+    private static ScaleViewModel scaleViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -170,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
         // 2000 milliseconds = 2 seconds
         if (System.currentTimeMillis() > backKeyPressedTime + 2000) {
             backKeyPressedTime = System.currentTimeMillis();
-            toast.makeText(this, R.string.back_exit, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.back_exit, Toast.LENGTH_SHORT).show();
             return;
         }
         // 마지막으로 뒤로가기 버튼을 눌렀던 시간에 2초를 더해 현재시간과 비교 후

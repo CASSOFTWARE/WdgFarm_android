@@ -10,8 +10,8 @@ import com.example.wdgfarm_android.model.Product;
 import java.util.List;
 
 public class ProductRepository {
-    private ProductDao productDao;
-    private LiveData<List<Product>> allProducts;
+    private static ProductDao productDao;
+    private static LiveData<List<Product>> allProducts;
 
     public ProductRepository(Application application) {
         ProductDatabase database = ProductDatabase.getInstance(application);

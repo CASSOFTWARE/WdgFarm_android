@@ -2,10 +2,10 @@ package com.example.wdgfarm_android.model;
 
 public class Setting {
 
-    private String scaleAIP;
-    private int scaleAPort;
-    private String scaleBIP;
-    private int scalBPort;
+    private static String scaleAIP;
+    private static int scaleAPort;
+    private static String scaleBIP;
+    private static int scalBPort;
 
     public Setting (){
 

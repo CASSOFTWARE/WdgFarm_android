@@ -10,8 +10,8 @@ import com.example.wdgfarm_android.model.Box;
 import java.util.List;
 
 public class BoxRepository {
-    private BoxDao boxDao;
-    private LiveData<List<Box>> allBoxs;
+    private static BoxDao boxDao;
+    private static LiveData<List<Box>> allBoxs;
 
     public BoxRepository(Application application){
         BoxDatabase database = BoxDatabase.getInstance(application);

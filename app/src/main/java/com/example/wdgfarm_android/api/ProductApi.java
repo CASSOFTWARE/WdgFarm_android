@@ -17,15 +17,15 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class ProductApi extends AsyncTask<Void, Void, String> {
-    private final String TAG = "[ProductApi]";
+    private final static String TAG = "[ProductApi]";
 
-    private ApiListener listener;
-    private String zone;
-    private String session;
-    private String productCode;
-    private String productName;
-    private int productPrice;
-    StringBuilder result;
+    private static ApiListener listener;
+    private static String zone;
+    private static String session;
+    private static String productCode;
+    private static String productName;
+    private static int productPrice;
+    static StringBuilder result;
 
     public ProductApi(String zone, String session, String productCode, String productName, int productPrice, ApiListener listener) {
         this.zone = zone;

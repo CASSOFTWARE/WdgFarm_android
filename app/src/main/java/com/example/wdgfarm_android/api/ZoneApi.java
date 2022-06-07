@@ -16,10 +16,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class ZoneApi extends AsyncTask<Void, Void, String> {
-    private final String TAG = "[ZoneApi]";
+    private final static String TAG = "[ZoneApi]";
 
-    private ApiListener listener;
-    StringBuilder result;
+    private static ApiListener listener;
+    static StringBuilder result;
 
     public ZoneApi(ApiListener listener) {
         this.listener = listener;

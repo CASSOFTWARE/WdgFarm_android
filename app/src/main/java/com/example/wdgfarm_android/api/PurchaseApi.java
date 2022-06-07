@@ -17,16 +17,16 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class PurchaseApi extends AsyncTask<Void, Void, String> {
-    private final String TAG = "[PurchaseApi]";
+    private final static String TAG = "[PurchaseApi]";
 
-    private ApiListener listener;
-    private String zone;
-    private String session;
-    private String date;
-    private String company;
-    private String product;
-    private int price;
-    StringBuilder result;
+    private static ApiListener listener;
+    private static String zone;
+    private static String session;
+    private static String date;
+    private static String company;
+    private static String product;
+    private static int price;
+    static StringBuilder result;
 
     public PurchaseApi(String zone, String session, String date, String company, String product, int price, ApiListener listener) {
         this.zone = zone;

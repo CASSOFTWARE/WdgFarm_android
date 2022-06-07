@@ -56,14 +56,14 @@ public class HistoryFragment extends Fragment {
     private static final int REQUEST_FROM_DATE = 1;
     private static final int REQUEST_TO_DATE = 2;
 
-    private SimpleDateFormat dateFormat;    //  2022/05/20
-    private SimpleDateFormat format;        //  2022/05/20 오후 5:15
+    private static SimpleDateFormat dateFormat;    //  2022/05/20
+    private static SimpleDateFormat format;        //  2022/05/20 오후 5:15
 
-    private HistoryViewModel historyViewModel;
-    private WeighingViewModel weighingViewModel;
-    private FragmentHistoryBinding binding;
-    public static ApiViewModel apiViewModel;
-    int failCnt = 0;
+    private static HistoryViewModel historyViewModel;
+    private static WeighingViewModel weighingViewModel;
+    private static FragmentHistoryBinding binding;
+    private static ApiViewModel apiViewModel;
+    private int failCnt = 0;
 
     public HistoryFragment() {
     }

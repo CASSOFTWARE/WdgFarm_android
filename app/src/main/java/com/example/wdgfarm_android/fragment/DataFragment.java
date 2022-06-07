@@ -21,7 +21,7 @@ import com.example.wdgfarm_android.viewmodel.ApiViewModel;
 
 public class DataFragment extends Fragment {
 
-    private ApiViewModel apiViewModel;
+    private static ApiViewModel apiViewModel;
 
     public DataFragment(){
 

@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.HandlerThread;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -16,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.RadioGroup;
 import android.widget.Toast;
+import android.os.Handler;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -33,6 +35,7 @@ import com.example.wdgfarm_android.api.ApiListener;
 import com.example.wdgfarm_android.api.PurchaseApi;
 import com.example.wdgfarm_android.databinding.FragmentWorkBinding;
 import com.example.wdgfarm_android.model.Weighing;
+import com.example.wdgfarm_android.utils.Cas22BytesProtocol;
 import com.example.wdgfarm_android.utils.CurrentTime;
 import com.example.wdgfarm_android.utils.DatetimePickerFragment;
 import com.example.wdgfarm_android.utils.PreferencesKey;
@@ -43,10 +46,8 @@ import com.example.wdgfarm_android.viewmodel.ScaleViewModel;
 import com.example.wdgfarm_android.viewmodel.WeighingViewModel;
 import com.example.wdgfarm_android.viewmodel.WeighingWorkViewModel;
 
-import org.apache.poi.ss.formula.functions.T;
 import org.json.JSONException;
 
-import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -70,7 +71,6 @@ public class WorkFragment extends Fragment {
     public static ScaleViewModel scaleViewModel;
     public static FragmentWorkBinding binding;
     private TcpThread tcpThread;
-
     private CurrentTime currentTime;
 
     public WorkFragment() {
@@ -83,6 +83,9 @@ public class WorkFragment extends Fragment {
         weighing.setCompanyName(INIT_COMPANY);
         weighing.setProductName(INIT_PRODUCT);
         weighing.setDate(Calendar.getInstance().getTime());
+
+
+
 
         format = new SimpleDateFormat("yyyy/MM/dd a hh:mm");
 
@@ -550,4 +553,5 @@ public class WorkFragment extends Fragment {
             }
         }).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
+
 }
