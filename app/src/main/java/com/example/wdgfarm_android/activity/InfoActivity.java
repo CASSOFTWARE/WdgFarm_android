@@ -316,7 +316,7 @@ public class InfoActivity extends AppCompatActivity {
 
                     productViewModel.insert(product);
 
-                    //Toast.makeText(this, "Product saved", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "상품 등록", Toast.LENGTH_SHORT).show();
                     break;
 
                 case "거래처 정보":
@@ -349,7 +349,7 @@ public class InfoActivity extends AppCompatActivity {
                     }).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
 
-                    //Toast.makeText(this, "Company saved", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "거래처 등록", Toast.LENGTH_SHORT).show();
                     break;
 
                 case "박스 정보":
@@ -360,7 +360,7 @@ public class InfoActivity extends AppCompatActivity {
                     Box box = new Box(box_name, box_weight);
                     boxViewModel.insert(box);
 
-                    Toast.makeText(this, "Box saved", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "박스 등록", Toast.LENGTH_SHORT).show();
                     break;
             }
 
@@ -368,7 +368,7 @@ public class InfoActivity extends AppCompatActivity {
             int id = data.getIntExtra(InfoAddActivity.EXTRA_ID, -1);
 
             if (id == -1) {
-                Toast.makeText(this, "Can't be updated", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "수정 실패", Toast.LENGTH_SHORT).show();
                 return;
             }
 
