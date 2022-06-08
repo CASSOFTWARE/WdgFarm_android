@@ -261,6 +261,7 @@ public class WorkFragment extends Fragment {
                     if (tcpThread != null) {
                         tcpThread.interrupt();
                         tcpThread = null;
+                        scaleViewModel.isConnected.setValue(false);
                     }
                 } else {
                     tcpThread = new TcpThread();
@@ -545,7 +546,7 @@ public class WorkFragment extends Fragment {
     private void purchaseApi() {
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
 
-        new PurchaseApi(apiViewModel.zone.getValue(), apiViewModel.sessionID.getValue(), format.format(weighing.getDate()), weighing.getCompanyName(), weighing.getProductName(), weighing.getProductPrice(), new ApiListener() {
+        new PurchaseApi(apiViewModel.zone.getValue(), apiViewModel.sessionID.getValue(), format.format(weighing.getDate()), weighing.getCompanyName(), weighing.getProductName(), weighing.getProductPrice(), getContext(), new ApiListener() {
             @Override
             public void success(String response) throws JSONException {
                 Log.d("TAG", "구매 입력 성공");

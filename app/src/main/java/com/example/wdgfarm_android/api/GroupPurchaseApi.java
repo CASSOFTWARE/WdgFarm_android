@@ -5,7 +5,6 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.example.wdgfarm_android.activity.MainActivity;
 import com.example.wdgfarm_android.model.Weighing;
 import com.example.wdgfarm_android.utils.URLs;
 import com.example.wdgfarm_android.viewmodel.WeighingViewModel;
@@ -20,28 +19,29 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 
-public class PurchaseApi extends AsyncTask<Void, Void, String> {
-    private final static String TAG = "[PurchaseApi]";
+public class GroupPurchaseApi extends AsyncTask<Void, Void, String> {
+    private final static String TAG = "[GroupPurchaseApi]";
 
     private static ApiListener listener;
     private static String zone;
     private static String session;
-    private static String date;
-    private static String company;
-    private static String product;
-    private static int price;
+
     static StringBuilder result;
 
+    private WeighingViewModel weighingViewModel;
+    private ArrayList<Weighing> weighingArrayList;
     private ProgressDialog progressDialog;
+    SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
 
-    public PurchaseApi(String zone, String session, String date, String company, String product, int price, Context context, ApiListener listener) {
+    public GroupPurchaseApi(String zone, String session, ArrayList<Weighing> weighingArrayList, WeighingViewModel weighingViewModel, Context context, ApiListener listener) {
         this.zone = zone;
         this.session = session;
-        this.date = date;
-        this.company = company;
-        this.product = product;
-        this.price = price;
+        this.weighingArrayList = weighingArrayList;
+        this.weighingViewModel = weighingViewModel;
         this.progressDialog = new ProgressDialog(context);
         this.listener = listener;
     }
@@ -51,29 +51,48 @@ public class PurchaseApi extends AsyncTask<Void, Void, String> {
     protected String doInBackground(Void... voids) {
 
         result = new StringBuilder();
-        JSONObject jsonObject = new JSONObject();
-        JSONArray jsonArray = new JSONArray();
-        JSONObject jsonList = new JSONObject();
-        JSONObject jsonData = new JSONObject();
+
         HttpURLConnection conn = null;
 
 
         try {
             URL url = new URL(URLs.BASE_REQUEST_URL + zone + URLs.PURCHASE_URL + session);
+            JSONObject jsonObject = new JSONObject();
+            JSONArray jsonArray = new JSONArray();
 
-            jsonData.put("UPLOAD_SER_NO", "");
-            jsonData.put("IO_DATE", date);
-            jsonData.put("CUST_DES", company);
-            jsonData.put("PROD_DES", product);
-            jsonData.put("QTY", 1);
-            jsonData.put("SUPPLY_AMT", price);
+            for (int i = 0; i < weighingArrayList.size(); i++) {
+                long now = System.currentTimeMillis();
 
-            jsonList.put("Line", "0");
-            jsonList.put("BulkDatas", jsonData);
+                JSONObject jsonList = new JSONObject();
+                JSONObject jsonData = new JSONObject();
 
-            jsonArray.put(jsonList);
+                jsonData.put("UPLOAD_SER_NO", "");
+                jsonData.put("IO_DATE", format.format(weighingArrayList.get(i).getDate()));
+                jsonData.put("CUST_DES", weighingArrayList.get(i).getCompanyName());
+                jsonData.put("PROD_DES", weighingArrayList.get(i).getProductName());
+                jsonData.put("QTY", 1);
+                jsonData.put("SUPPLY_AMT", weighingArrayList.get(i).getProductPrice());
 
-            jsonObject.put("PurchasesList", jsonArray);
+                jsonList.put("Line", "0");
+                jsonList.put("BulkDatas", jsonData);
+
+                jsonArray.put(jsonList);
+
+                jsonObject.put("PurchasesList", jsonArray);
+            }
+//            jsonData.put("UPLOAD_SER_NO", "");
+//            jsonData.put("IO_DATE", date);
+//            jsonData.put("CUST_DES", company);
+//            jsonData.put("PROD_DES", product);
+//            jsonData.put("QTY", 1);
+//            jsonData.put("SUPPLY_AMT", price);
+//
+//            jsonList.put("Line", "0");
+//            jsonList.put("BulkDatas", jsonData);
+//
+//            jsonArray.put(jsonList);
+//
+//            jsonObject.put("PurchasesList", jsonArray);
 
             conn = (HttpURLConnection) url.openConnection();
 
@@ -109,7 +128,7 @@ public class PurchaseApi extends AsyncTask<Void, Void, String> {
     }
 
     @Override
-    protected void onPreExecute(){
+    protected void onPreExecute() {
         super.onPreExecute();
         progressDialog.setMessage("ECOUNT ERP 등록중...");
         progressDialog.show();
@@ -120,7 +139,7 @@ public class PurchaseApi extends AsyncTask<Void, Void, String> {
         super.onPostExecute(response);
         Log.e(TAG, "Response : " + response);
 
-        if(progressDialog != null && progressDialog.isShowing()){
+        if (progressDialog != null && progressDialog.isShowing()) {
             progressDialog.dismiss();
         }
 

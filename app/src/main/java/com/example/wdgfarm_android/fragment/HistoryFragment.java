@@ -30,6 +30,7 @@ import com.example.wdgfarm_android.activity.InfoAddActivity;
 import com.example.wdgfarm_android.adapter.SpinnerAdapter;
 import com.example.wdgfarm_android.adapter.WeighingAdapter;
 import com.example.wdgfarm_android.api.ApiListener;
+import com.example.wdgfarm_android.api.GroupPurchaseApi;
 import com.example.wdgfarm_android.api.PurchaseApi;
 import com.example.wdgfarm_android.databinding.FragmentHistoryBinding;
 import com.example.wdgfarm_android.model.Weighing;
@@ -44,6 +45,7 @@ import org.json.JSONException;
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -115,10 +117,9 @@ public class HistoryFragment extends Fragment {
                         weighingViewModel.getFitterDateWeighings(date.getTime(), historyViewModel.dateTo.getValue().getTime()).observe(getActivity(), new Observer<List<Weighing>>() {
                             @Override
                             public void onChanged(List<Weighing> weighings) {
-                                if(historyViewModel.spinnerData.getValue().contains("미전송")) {
+                                if (historyViewModel.spinnerData.getValue().contains("미전송")) {
                                     //weighingAdapter.setWeighings(weighingViewModel.getFitterNotSendWeighings(historyViewModel.dateFrom.getValue().getTime(), historyViewModel.dateTo.getValue().getTime()).getValue());
-                                }
-                                else {
+                                } else {
                                     weighingAdapter.setWeighings(weighings);
                                 }
                                 binding.historySearchCount.setText(String.valueOf(weighingAdapter.getItemCount()) + " 개");
@@ -137,10 +138,9 @@ public class HistoryFragment extends Fragment {
                         weighingViewModel.getFitterDateWeighings(historyViewModel.dateFrom.getValue().getTime(), date.getTime()).observe(getActivity(), new Observer<List<Weighing>>() {
                             @Override
                             public void onChanged(List<Weighing> weighings) {
-                                if(historyViewModel.spinnerData.getValue().contains("미전송")) {
+                                if (historyViewModel.spinnerData.getValue().contains("미전송")) {
                                     //weighingAdapter.setWeighings(weighingViewModel.getFitterNotSendWeighings(historyViewModel.dateFrom.getValue().getTime(), historyViewModel.dateTo.getValue().getTime()).getValue());
-                                }
-                                else {
+                                } else {
                                     weighingAdapter.setWeighings(weighings);
                                 }
                                 binding.historySearchCount.setText(String.valueOf(weighingAdapter.getItemCount()) + " 개");
@@ -309,30 +309,38 @@ public class HistoryFragment extends Fragment {
             public void onClick(View view) {
                 SimpleDateFormat formatErp = new SimpleDateFormat("yyyyMMdd");
                 failCnt = 0;
+                ArrayList<Weighing> weighingArrayList = new ArrayList<>();
+
                 for (int i = 0; i < weighingAdapter.getItemCount(); i++) {
                     Weighing weighing = weighingAdapter.getWeighingAt(i);
-                    long now = System.currentTimeMillis();
-                    Date date = new Date(now);
-                    SimpleDateFormat erpFormat = new SimpleDateFormat("yyyy/MM/dd a hh:mm:ss");
+
                     if (weighing.getCompanyCode() == null) {
                         failCnt++;
                         Toast.makeText(getContext(), failCnt + " 개 실패", Toast.LENGTH_SHORT).show();
                     } else {
-
-                        new PurchaseApi(apiViewModel.zone.getValue(), apiViewModel.sessionID.getValue(), formatErp.format(weighing.getDate()), weighing.getCompanyName(), weighing.getProductName(), weighing.getProductPrice(), new ApiListener() {
-                            @Override
-                            public void success(String response) throws JSONException {
-                                weighing.setErpDate(erpFormat.format(date));
-                                weighingViewModel.update(weighing);
-                            }
-
-                            @Override
-                            public void fail() {
-                                failCnt++;
-                                Toast.makeText(getContext(), failCnt + " 개 실패", Toast.LENGTH_SHORT).show();
-                            }
-                        }).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                        weighingArrayList.add(weighing);
                     }
+                }
+                if (!weighingArrayList.isEmpty()) {
+                    new GroupPurchaseApi(apiViewModel.zone.getValue(), apiViewModel.sessionID.getValue(), weighingArrayList, weighingViewModel, getContext(), new ApiListener() {
+                        @Override
+                        public void success(String response) throws JSONException {
+                            long now = System.currentTimeMillis();
+                            Date date = new Date(now);
+                            SimpleDateFormat erpFormat = new SimpleDateFormat("yyyy/MM/dd a hh:mm:ss");
+
+                            for (int i = 0; i < weighingArrayList.size(); i++) {
+                                weighingArrayList.get(i).setErpDate(erpFormat.format(date));
+                                weighingViewModel.update(weighingArrayList.get(i));
+                            }
+                            Toast.makeText(getContext(), weighingArrayList.size() + " 개 성공", Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void fail() {
+                            Toast.makeText(getContext(), "ERP 전송 실패", Toast.LENGTH_SHORT).show();
+                        }
+                    }).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 }
             }
         });
