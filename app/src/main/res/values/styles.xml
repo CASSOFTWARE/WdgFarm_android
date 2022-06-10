@@ -1,21 +1,21 @@
 <resources>
 
-    <style name="Widget.Theme.WdgFarm_Android.ButtonBar.Fullscreen" parent="">
+    <style name="Widget.Theme.WdgFarm_Android.ButtonBar.Light.Fullscreen" parent="">
         <item name="android:background">@color/black_overlay</item>
         <item name="android:buttonBarStyle">?android:attr/buttonBarStyle</item>
     </style>
 
-    <style name="Work_FontTheme1" parent="Theme.AppCompat.NoActionBar">
+    <style name="Work_FontTheme1" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:textSize">25dp</item>
         <item name="android:textColor">@color/colorBlack</item>
     </style>
 
-    <style name="Work_FontTheme2" parent="Theme.AppCompat.NoActionBar">
+    <style name="Work_FontTheme2" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:textSize">30dp</item>
         <item name="android:textColor">@color/colorBlack</item>
     </style>
 
-    <style name="Work_FontTheme3" parent="Theme.AppCompat.NoActionBar">
+    <style name="Work_FontTheme3" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:textSize">45dp</item>
         <item name="android:textColor">@color/colorBlack</item>
     </style>

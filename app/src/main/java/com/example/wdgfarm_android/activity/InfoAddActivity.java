@@ -56,6 +56,7 @@ public class InfoAddActivity extends AppCompatActivity {
                 binding.infoAddCodeText.setText(R.string.product_code);
                 binding.infoAddNameText.setText(R.string.product_name);
                 binding.infoAddValueText.setText(R.string.product_price);
+                binding.infoAddCodeValue.setInputType(InputType.TYPE_CLASS_TEXT);
                 binding.infoAddTelText.setVisibility(View.GONE);
                 binding.infoAddTelValue.setVisibility(View.GONE);
                 binding.infoAddValue.setInputType(InputType.TYPE_CLASS_NUMBER);

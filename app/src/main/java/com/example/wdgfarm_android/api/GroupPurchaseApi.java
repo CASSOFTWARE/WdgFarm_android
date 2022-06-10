@@ -70,7 +70,7 @@ public class GroupPurchaseApi extends AsyncTask<Void, Void, String> {
                 jsonData.put("IO_DATE", format.format(weighingArrayList.get(i).getDate()));
                 jsonData.put("CUST_DES", weighingArrayList.get(i).getCompanyName());
                 jsonData.put("PROD_DES", weighingArrayList.get(i).getProductName());
-                jsonData.put("QTY", 1);
+                jsonData.put("QTY", String.valueOf(weighingArrayList.get(i).getRealWeight()));
                 jsonData.put("SUPPLY_AMT", weighingArrayList.get(i).getProductPrice());
 
                 jsonList.put("Line", "0");

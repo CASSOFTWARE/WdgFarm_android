@@ -233,6 +233,7 @@ public class HistoryFragment extends Fragment {
                 intent.putExtra(DetailActivity.EXTRA_BOX_ACCOUNT, weighing.getBoxAccount());
                 intent.putExtra(DetailActivity.EXTRA_PALETTE_WEIGHT, weighing.getPaletteWeight());
                 intent.putExtra(DetailActivity.EXTRA_DEDUCTIBLE_WEIGHT, weighing.getDeductibleWeight());
+                intent.putExtra(DetailActivity.EXTRA_REAL_WEIGHT, weighing.getRealWeight());
                 intent.putExtra(DetailActivity.EXTRA_ERP_DATE, weighing.getErpDate());
 
                 startActivity(intent);

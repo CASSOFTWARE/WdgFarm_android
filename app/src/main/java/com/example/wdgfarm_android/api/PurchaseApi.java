@@ -31,17 +31,19 @@ public class PurchaseApi extends AsyncTask<Void, Void, String> {
     private static String company;
     private static String product;
     private static int price;
+    private static float weight;
     static StringBuilder result;
 
     private ProgressDialog progressDialog;
 
-    public PurchaseApi(String zone, String session, String date, String company, String product, int price, Context context, ApiListener listener) {
+    public PurchaseApi(String zone, String session, String date, String company, String product, int price, float weight, Context context, ApiListener listener) {
         this.zone = zone;
         this.session = session;
         this.date = date;
         this.company = company;
         this.product = product;
         this.price = price;
+        this.weight = weight;
         this.progressDialog = new ProgressDialog(context);
         this.listener = listener;
     }
@@ -65,7 +67,7 @@ public class PurchaseApi extends AsyncTask<Void, Void, String> {
             jsonData.put("IO_DATE", date);
             jsonData.put("CUST_DES", company);
             jsonData.put("PROD_DES", product);
-            jsonData.put("QTY", 1);
+            jsonData.put("QTY", String.valueOf(weight));
             jsonData.put("SUPPLY_AMT", price);
 
             jsonList.put("Line", "0");

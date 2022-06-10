@@ -183,7 +183,7 @@ public class WorkFragment extends Fragment {
         scaleViewModel.weight.observe(getActivity(), new Observer<String>() {
             @Override
             public void onChanged(String totalWeight) {
-                if (totalWeight.matches("0.0")) {
+                if (Float.parseFloat(totalWeight) < 1.0) {
                     weighingWorkViewModel.prvRepeat.setValue(true);
                 }
                 binding.totalWeightValue.setText(totalWeight);
@@ -437,6 +437,7 @@ public class WorkFragment extends Fragment {
 
                 if (weighingWorkViewModel.prvRepeat.getValue()) {
                     if (!binding.workProductBtn.getText().toString().contains(INIT_PRODUCT) && !binding.workSaveBtn.getText().toString().contains(INIT_COMPANY) && !binding.workDateBtn.getText().toString().contains(INIT_DATE)) {
+
                         weighing.setTotalWeight(Float.parseFloat(binding.totalWeightValue.getText().toString()));
                         weighing.setBoxWeight(Float.parseFloat(binding.boxWeightValue.getText().toString()));
 
@@ -458,14 +459,40 @@ public class WorkFragment extends Fragment {
 
                         weighingWorkViewModel.weighing.setValue(weighing);
 
-                        if (weighing.getCompanyCode() == null) {
-                            weighing.setErpDate("전송 실패");
-                            weighingViewModel.insert(weighing);
-                            Toast.makeText(getContext(), "저장되었습니다.", Toast.LENGTH_SHORT).show();
-                        } else {
-                            purchaseApi();
-                        }
-                        weighingWorkViewModel.prvRepeat.setValue(false);
+                        AlertDialog.Builder dlg = new AlertDialog.Builder(getContext());
+                        dlg.setTitle("데이터 확인");
+                        dlg.setMessage("- 거래처명 : " + weighing.getCompanyName()
+                                + "\n\n- 품목명 : " + weighing.getProductName()
+                                + "\n\n- 단가 : " + weighing.getProductPrice()
+                                + "\n\n- 전체 중량 : " + weighing.getTotalWeight()
+                                + "\n\n- 박스명 : " + weighing.getBoxName()
+                                + "\n\n- 박스 중량 : " + weighing.getBoxWeight()
+                                + "\n\n- 박스 수량 : " + weighing.getBoxAccount()
+                                + "\n\n- 팔레트 중량 : " + weighing.getPaletteWeight()
+                                + "\n\n- 공제 중량 : " + weighing.getDeductibleWeight()
+                                + "\n\n- 실 중량 : " + weighing.getRealWeight());
+                        dlg.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                if (weighing.getCompanyCode() == null) {
+                                    weighing.setErpDate("전송 실패");
+                                    weighingViewModel.insert(weighing);
+                                    Toast.makeText(getContext(), "저장되었습니다.", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    purchaseApi();
+                                }
+                                weighingWorkViewModel.prvRepeat.setValue(false);
+                            }
+                        });
+                        dlg.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                            }
+                        });
+
+                        dlg.show();
+
                     } else {
                         Toast.makeText(getContext(), "빈칸이 있습니다", Toast.LENGTH_SHORT).show();
                     }
@@ -546,7 +573,7 @@ public class WorkFragment extends Fragment {
     private void purchaseApi() {
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
 
-        new PurchaseApi(apiViewModel.zone.getValue(), apiViewModel.sessionID.getValue(), format.format(weighing.getDate()), weighing.getCompanyName(), weighing.getProductName(), weighing.getProductPrice(), getContext(), new ApiListener() {
+        new PurchaseApi(apiViewModel.zone.getValue(), apiViewModel.sessionID.getValue(), format.format(weighing.getDate()), weighing.getCompanyName(), weighing.getProductName(), weighing.getProductPrice(), weighing.getRealWeight(), getContext(), new ApiListener() {
             @Override
             public void success(String response) throws JSONException {
                 Log.d("TAG", "구매 입력 성공");
