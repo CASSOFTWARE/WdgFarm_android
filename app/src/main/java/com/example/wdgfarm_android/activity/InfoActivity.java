@@ -29,6 +29,8 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 
@@ -78,6 +80,9 @@ public class InfoActivity extends AppCompatActivity {
     private static ProductViewModel productViewModel;
     private static CompanyViewModel companyViewModel;
     private static BoxViewModel boxViewModel;
+    private ProductAdapter productAdapter;
+    private CompanyAdapter companyAdapter;
+    private BoxAdapter boxAdapter;
 
     private static String info, zone, session;
     ActivityResultLauncher<Intent> filePicker;
@@ -105,9 +110,9 @@ public class InfoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_info);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        ProductAdapter productAdapter = new ProductAdapter();
-        CompanyAdapter companyAdapter = new CompanyAdapter();
-        BoxAdapter boxAdapter = new BoxAdapter();
+        productAdapter = new ProductAdapter();
+        companyAdapter = new CompanyAdapter();
+        boxAdapter = new BoxAdapter();
 
         ActivityInfoBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_info);
 
@@ -202,6 +207,8 @@ public class InfoActivity extends AppCompatActivity {
                 break;
 
             case "박스 정보":
+                binding.searchEdit.setVisibility(View.INVISIBLE);
+                binding.searchIcon.setVisibility(View.INVISIBLE);
                 binding.recyclerView.setAdapter(boxAdapter);
                 binding.titleInfoCode.setVisibility(View.VISIBLE);
                 binding.titleInfoValue.setVisibility(View.VISIBLE);
@@ -278,6 +285,46 @@ public class InfoActivity extends AppCompatActivity {
                 startActivityForResult(intent, EDIT_REQUEST);
             }
         });
+
+        binding.searchEdit.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                searchDatabase(editable.toString(), info);
+            }
+        });
+    }
+
+    private void searchDatabase(String query, String info) {
+        String searchQuery = "%" + query + "%";
+        switch (info) {
+            case "거래처 정보":
+                companyViewModel.getFiltterCompanys(searchQuery).observe(this, new Observer<List<Company>>() {
+                    @Override
+                    public void onChanged(List<Company> companies) {
+                        companyAdapter.setCompanys(companies);
+                    }
+                });
+                break;
+
+            case "상품 정보":
+                productViewModel.getFiltterProducts(searchQuery).observe(this, new Observer<List<Product>>() {
+                    @Override
+                    public void onChanged(List<Product> products) {
+                        productAdapter.setProducts(products);
+                    }
+                });
+                break;
+        }
     }
 
     @Override
