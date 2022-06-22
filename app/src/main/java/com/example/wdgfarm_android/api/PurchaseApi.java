@@ -68,8 +68,7 @@ public class PurchaseApi extends AsyncTask<Void, Void, String> {
             jsonData.put("CUST_DES", company);
             jsonData.put("PROD_DES", product);
             jsonData.put("QTY", String.valueOf(weight));
-            jsonData.put("SUPPLY_AMT", String.format("%.0f", price*weight));
-
+            jsonData.put("SUPPLY_AMT", Math.round(price*weight));
             jsonList.put("Line", "0");
             jsonList.put("BulkDatas", jsonData);
 
